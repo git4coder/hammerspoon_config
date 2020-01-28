@@ -9,13 +9,14 @@
 apps = {
   {key = 'e', app = '/System/Library/CoreServices/Finder.app'},
   {key = 't', app = '/System/Applications/Utilities/Terminal.app'},
-  {key = 'a', app = '/Applications/Affinity Photo.app'},
+  {key = 'a', app = '/Applications/Postman.app'},
   {key = 'b', app = '/Applications/Bear.app'},
   {key = 'd', app = '/Applications/DBeaver.app'},
   {key = 'f', app = '/Applications/Fork.app'},
   {key = 'g', app = '/Applications/Google Chrome.app'},
   {key = 'm', app = '/System/Applications/Utilities/Activity Monitor.app'},
   {key = 'o', app = '/Applications/wpsoffice.app'},
+  {key = 'p', app = '/Applications/Affinity Photo.app'},
   {key = 'q', app = '/Applications/QQ.app'},
   {key = 's', app = '/System/Applications/System Preferences.app'},
   {key = 'v', app = '/Applications/Visual Studio Code.app'},
@@ -29,13 +30,17 @@ local launchOrFocusWindowByPath = function(path)
   return function()
     local curApp = hs.application.frontmostApplication()
     if curApp:path() == path then -- 当前 APP 就是要打开的 APP 时找到当前 APP 的下一个窗口
-      -- APP 的所有窗口（不含 toast、scrollarea 等窗体）
+      -- 获取 APP 的所有窗口（不含 toast、scrollarea 等窗体）
       local wins = hs.fnutils.filter(curApp:allWindows(), function(item)
         return item:role() == "AXWindow"
       end)
-      -- APP 没有窗口或只有一个窗口时直接返回（关闭所有窗口后程序并没有退出，所以写的是 <= 而不是 =，finder 有一个窗口是“桌面”）
-      if #wins <= 1 then
+      -- 只有一个窗口时直接返回（关闭所有窗口后程序并没有退出，所以写的是 <= 而不是 =，finder 有一个窗口是“桌面”）
+      if #wins == 1 then
         return
+      end
+      -- 没有窗口（当前窗口全部关闭后程序并不退出）
+      if #wins == 0 then
+        hs.application.launchOrFocus(path)
       end
       -- 显示当前 APP 的下一个窗口
       local curWin = curApp:focusedWindow()
@@ -59,11 +64,11 @@ end
 hs.fnutils.each(
   apps,
   function(entry)
+    local message = nil -- string.match(entry.app, '/([%w%s]+).app$') -- nil
     hs.hotkey.bind(
       {'ctrl', 'alt', 'cmd'},
       entry.key,
-      nil,
-      -- string.match(entry.app, '/([%w%s]+).app$'),
+      message,
       -- function()
       --   hs.application.launchOrFocus(entry.app)
       -- end
@@ -88,10 +93,10 @@ hs.hotkey.bind(
     hs.alert.closeAll()
     hs.alert.show(
       string.format(
-        '%s\n%s\n%s\n%sj',
-        hs.window.focusedWindow():application():title(),
+        '%s\n%s\n%s\n%s',
+        hs.application.frontmostApplication():title(),
         hs.application.frontmostApplication():bundleID(),
-        hs.window.focusedWindow():application():path(),
+        hs.application.frontmostApplication():path(),
         hs.keycodes.currentSourceID()
       ),
       alertStyle
