@@ -7,21 +7,23 @@
 
 -- 打开常用工具
 apps = {
-  {key = 'e', app = '/System/Library/CoreServices/Finder.app'},
-  {key = 't', app = '/System/Applications/Utilities/Terminal.app'},
-  {key = 'a', app = '/Applications/Postman.app'},
-  {key = 'b', app = '/Applications/Bear.app'},
-  {key = 'd', app = '/Applications/DBeaver.app'},
-  {key = 'f', app = '/Applications/Fork.app'},
-  {key = 'g', app = '/Applications/Google Chrome.app'},
-  {key = 'm', app = '/System/Applications/Utilities/Activity Monitor.app'},
-  {key = 'o', app = '/Applications/wpsoffice.app'},
-  {key = 'p', app = '/Applications/Affinity Photo.app'},
-  {key = 'q', app = '/Applications/QQ.app'},
-  {key = 's', app = '/System/Applications/System Preferences.app'},
-  {key = 'v', app = '/Applications/Visual Studio Code.app'},
-  {key = 'w', app = '/Applications/wechatwebdevtools.app'},
-  {key = 'x', app = '/Applications/Xcode.app'}
+  {key = 'a', path = '/Applications/Affinity Photo.app'},
+  {key = 'b', path = '/Applications/Bear.app'},
+  {key = 'd', path = '/Applications/DBeaver.app'},
+  {key = 'e', path = '/System/Library/CoreServices/Finder.app'},
+  {key = 'f', path = '/Applications/Fork.app'},
+  {key = 'g', path = '/Applications/Google Chrome.app'},
+  {key = 't', path = '/System/Applications/Utilities/Terminal.app'},
+  {key = 'o', path = '/Applications/wpsoffice.app'},
+  {key = 'm', path = '/System/Applications/Utilities/Activity Monitor.app'},
+  {key = 'M', path = '/Applications/Motrix.app'},
+  {key = 'p', path = '/Applications/Postman.app'},
+  {key = 'q', path = '/Applications/QQ.app'},
+  {key = 'D', path = '/Applications/DingTalk.app'},
+  {key = 's', path = '/System/Applications/System Preferences.app'},
+  {key = 'v', path = '/Applications/Visual Studio Code.app'},
+  {key = 'w', path = '/Applications/wechatwebdevtools.app'},
+  {key = 'x', path = '/Applications/Xcode.app'}
 }
 
 --  打开/切换到App(可以在当前 APP 的窗口间切换)
@@ -34,6 +36,7 @@ local launchOrFocusWindowByPath = function(path)
       local wins = hs.fnutils.filter(curApp:allWindows(), function(item)
         return item:role() == "AXWindow"
       end)
+      print(string.match(path, '/([%w%s]+).app$') .. ' #iwins: ' .. #wins)
       -- 只有一个窗口时直接返回（关闭所有窗口后程序并没有退出，所以写的是 <= 而不是 =，finder 有一个窗口是“桌面”）
       if #wins == 1 then
         return
@@ -64,15 +67,20 @@ end
 hs.fnutils.each(
   apps,
   function(entry)
-    local message = nil -- string.match(entry.app, '/([%w%s]+).app$') -- nil
+    -- local message = string.match(entry.app, '/([%w%s]+).app$') -- nil
+    local message = nil
+    local hyper = {'ctrl', 'alt', 'cmd'}
+    if string.match(entry.key, '[A-Z]') then
+      table.insert(hyper, 'shift')
+    end
     hs.hotkey.bind(
-      {'ctrl', 'alt', 'cmd'},
+      hyper,
       entry.key,
       message,
       -- function()
       --   hs.application.launchOrFocus(entry.app)
       -- end
-      launchOrFocusWindowByPath(entry.app)
+      launchOrFocusWindowByPath(entry.path)
     )
   end
 )
@@ -112,7 +120,7 @@ hs.hotkey.bind(
     hs.alert.closeAll();
     local info = ''
     for k, v in ipairs(apps) do
-      info = info .. 'Caps-' .. v.key .. ' ' .. string.match(v.app, '/([%w%s]+).app$') .. '\n'
+      info = info .. 'Caps-' .. v.key .. ' ' .. string.match(v.path, '/([%w%s]+).app$') .. '\n'
     end
     if hs.application.frontmostApplication():path() == '/System/Library/CoreServices/Finder.app' then
       info = info .. 'Caps-T Terminal Here\n'
