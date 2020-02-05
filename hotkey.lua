@@ -23,7 +23,8 @@ apps = {
   {key = 's', path = '/System/Applications/System Preferences.app'},
   {key = 'v', path = '/Applications/Visual Studio Code.app'},
   {key = 'w', path = '/Applications/wechatwebdevtools.app'},
-  {key = 'x', path = '/Applications/Xcode.app'}
+  {key = 'x', path = '/Applications/Xcode.app'},
+  {key = 'y', path = '/Applications/NeteaseMusic.app'}
 }
 
 --  打开/切换到App(可以在当前 APP 的窗口间切换)
@@ -89,7 +90,7 @@ alertStyle = {
   strokeColor = {white = 1, alpha = 0.25 },
   radius   = 5,
   textFont = 'Monaco',
-  textSize = 16,
+  textSize = 12,
   atScreenEdge = 0
 }
 
