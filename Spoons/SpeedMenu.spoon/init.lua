@@ -24,21 +24,35 @@ local function data_diff()
     local out_seq = hs.execute(obj.outstr)
     local in_diff = in_seq - obj.inseq
     local out_diff = out_seq - obj.outseq
-    if in_diff/1024 > 1024 then
-        obj.kbin = string.format("%6.2f", in_diff/1024/1024) .. ' MB/s'
-    else
-        obj.kbin = string.format("%6.2f", in_diff/1024) .. ' KB/s'
-    end
-    if out_diff/1024 > 1024 then
-        obj.kbout = string.format("%6.2f", out_diff/1024/1024) .. ' MB/s'
-    else
-        obj.kbout = string.format("%6.2f", out_diff/1024) .. ' KB/s'
-    end
-    local disp_str = '△' .. obj.kbout .. '\n▽' .. obj.kbin
+    -- if in_diff/1024 > 1024 then
+        obj.kbin = string.format("%4.2f", in_diff/1024/1024) .. 'm/s'
+    -- else
+    --     obj.kbin = string.format("%6.2f", in_diff/1024) .. 'K/s'
+    -- end
+    -- if out_diff/1024 > 1024 then
+        obj.kbout = string.format("%4.2f", out_diff/1024/1024) .. 'm/s'
+    -- else
+    --     obj.kbout = string.format("%6.2f", out_diff/1024) .. 'K/s'
+    -- end
+    local disp_str = obj.kbout .. '\n' .. obj.kbin
     local text_style = {
-		dark  = {font={name="Go Mono For Powerline", size=9.0, color={hex="#FFFFFF"}}},
-		light = {font={name="Go Mono For Powerline", size=9.0, color={hex="#000000"}}}
-	}
+      dark  = {
+        font = {name = "Monaco", size = 8.0},
+        color = {hex = "#FFFFFF"},
+        paragraphStyle = {
+          maximumLineHeight = 12.0,
+          minimumLineHeight = 0.0
+        }
+      },
+      light = {
+        font = {name = "Monaco", size = 8.0},
+        color = {hex = "#000000"},
+        paragraphStyle = {
+          maximumLineHeight = 12.0,
+          minimumLineHeight = 0.0
+        }
+      }
+    }
     if obj.darkmode then
         obj.disp_str = hs.styledtext.new(disp_str, text_style.dark)
     else
@@ -87,7 +101,7 @@ function obj:rescan()
         end
         local macaddr = hs.execute('ifconfig ' .. obj.interface .. ' | grep ether | awk \'{print $2}\'')
         table.insert(menuitems_table, {
-            title = "MAC Addr: " .. macaddr,
+            title = "MAC: " .. macaddr,
             tooltip = "Copy MAC Address to clipboard",
             fn = function() hs.pasteboard.setContents(macaddr) end
         })
