@@ -124,6 +124,44 @@ hs.hotkey.bind(
   end
 )
 
+-- TodoList
+local todoFile = '~/Documents/todo.txt'
+hs.hotkey.bind(
+  {'ctrl', 'alt', 'cmd'},
+  '\'',
+  function()
+    hs.focus()
+    local file = todoFile
+    local confirm, content = hs.dialog.textPrompt('请输入需要记录的内容', 'File: ' .. file, '', '保存', '取消')
+    print(confirm, content);
+    if ('保存' == confirm) then
+      local script = string.format([[
+        do shell script "echo $(date) - %s >> %s"
+      ]], content, file)
+      print(script)
+      local rs = hs.osascript.applescript(script)
+      if rs == true then
+        hs.alert.show(content .. '已记录')
+      else
+        hs.alert.show(content .. '记录失败', {fillColor = hs.drawing.color.asRGB({hex = '#CC0000', alpha = 1})})
+      end
+    end
+  end
+)
+hs.hotkey.bind(
+  {'ctrl', 'alt', 'cmd', 'shift'},
+  '\'',
+  function()
+    hs.focus()
+    local file = todoFile
+    local script = string.format([[
+      do shell script "qlmanage -p %s"
+    ]], file)
+    print(script)
+    hs.osascript.applescript(script)
+  end
+)
+
 -- 显示可用快捷键清单
 hs.hotkey.bind(
   {'ctrl', 'alt', 'cmd'},
