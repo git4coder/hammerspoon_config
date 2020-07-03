@@ -9,11 +9,13 @@
 apps = {
   {key = 'a', path = '/Applications/Affinity Photo.app'},
   {key = 'b', path = '/Applications/Bear.app'},
+  {key = 'B', path = '/Applications/Blender.app'},
   {key = 'd', path = '/Applications/DBeaver.app'},
   {key = 'D', path = '/Applications/DingTalk.app'},
   {key = 'e', path = '/System/Library/CoreServices/Finder.app'},
   {key = 'f', path = '/Applications/Fork.app'},
   {key = 'g', path = '/Applications/Google Chrome.app'},
+  {key = 'j', path = '/Applications/PhpStorm 2020.2 EAP.app'}, 
   {key = 't', path = '/System/Applications/Utilities/Terminal.app'},
   {key = 'o', path = '/Applications/wpsoffice.app'},
   {key = 'm', path = '/Applications/Motrix.app'},
@@ -24,6 +26,7 @@ apps = {
   {key = 'S', path = '/System/Applications/System Preferences.app'},
   {key = 'v', path = '/Applications/Visual Studio Code.app'},
   {key = 'V', path = '/Applications/VirtualBox.app'},
+  {key = 'W', path = '/Applications/WeChat.app'},
   {key = 'w', path = '/Applications/wechatwebdevtools.app'},
   {key = 'x', path = '/Applications/Xcode.app'},
   {key = 'y', path = '/Applications/NeteaseMusic.app'}
@@ -34,13 +37,13 @@ local launchOrFocusWindowByPath = function(path)
   local toApp  = hs.application.infoForBundlePath(path)
   return function()
     local curApp = hs.application.frontmostApplication()
-    print(string.match(path, '/([%w%s]+).app$') .. ' <-- ' .. string.match(curApp:path(), '/([%w%s]+).app$'))
+    print(string.match(path, '/([%w%d%s.]+).app$') .. ' <-- ' .. string.match(curApp:path(), '/([%w%d%s.]+).app$'))
     if curApp:path() == path then -- 当前 APP 就是要打开的 APP 时找到当前 APP 的下一个窗口
       -- 获取 APP 的所有窗口（不含 toast、scrollarea 等窗体）
       local wins = hs.fnutils.filter(curApp:allWindows(), function(item)
         return item:role() == "AXWindow"
       end)
-      print('#wins: ' .. #wins .. ' <-- ' .. string.match(path, '/([%w%s]+).app$'))
+      print('#wins: ' .. #wins .. ' <-- ' .. string.match(path, '/([%w%d%s.]+).app$'))
       for i,v in ipairs(curApp:allWindows()) do
         print(i, v:role(), v:title())
       end
@@ -105,31 +108,37 @@ alertStyle = {
   atScreenEdge = 0
 }
 
+local funs = {}
+
 -- 获得当前 APP 的信息
-hs.hotkey.bind(
-  {'ctrl', 'alt', 'cmd'},
-  '.',
-  function()
+funs.appInfo = {
+  name = 'Get BundleID',
+  useShift = false, -- 追加到 hyper 里的键
+  key = '.',
+  fun =   function()
     local title = hs.application.frontmostApplication():title()
     local bundleID = hs.application.frontmostApplication():bundleID()
     local path = hs.application.frontmostApplication():path()
     local im = hs.keycodes.currentSourceID()
+    local content = string.format('%s\n%s\n%s\n%s', title, bundleID, path, im)
     hs.alert.closeAll()
     hs.alert.show(
-      string.format('%s\n%s\n%s\n%s', title, bundleID, path, im),
+      content,
       alertStyle
     )
+    hs.pasteboard.setContents(content);
     print('BundleID:', bundleID);
     print('    Path:', path);
   end
-)
+}
 
--- TodoList
 local todoFile = '~/Documents/todo.txt'
-hs.hotkey.bind(
-  {'ctrl', 'alt', 'cmd'},
-  '\'',
-  function()
+-- TodoList
+funs.todoAdd = {
+  name = 'TodoList Form',
+  useShift = false, -- 追加到 hyper 里的键
+  key = '\'',
+  fun = function()
     hs.focus()
     local file = todoFile
     local confirm, content = hs.dialog.textPrompt('请输入需要记录的内容', 'File: ' .. file, '', '保存', '取消')
@@ -147,11 +156,12 @@ hs.hotkey.bind(
       end
     end
   end
-)
-hs.hotkey.bind(
-  {'ctrl', 'alt', 'cmd', 'shift'},
-  '\'',
-  function()
+}
+funs.todoList = {
+  name = 'Todo List',
+  useShift = true, -- 追加到 hyper 里的键
+  key = '\'',
+  fun = function()
     hs.focus()
     local file = todoFile
     local script = string.format([[
@@ -160,22 +170,51 @@ hs.hotkey.bind(
     print(script)
     hs.osascript.applescript(script)
   end
+}
+
+-- 为功能绑定快捷键
+hs.fnutils.each(
+  funs,
+  function(fun)
+    local message = nil
+    local hyper = {'ctrl', 'alt', 'cmd'}
+    if fun.useShift then
+      table.insert(hyper, fun.optional)
+    end
+    hs.hotkey.bind(
+      hyper,
+      fun.key,
+      message,
+      fun.fun
+    )
+  end
 )
 
 -- 显示可用快捷键清单
+local shiftKeys = {}
+shiftKeys["'"] = '"'
+shiftKeys['/'] = '?'
+
 hs.hotkey.bind(
   {'ctrl', 'alt', 'cmd'},
   '/',
   function()
     hs.alert.closeAll();
     local info = ''
+    -- apps
     for k, v in ipairs(apps) do
       local key = 'Caps-' .. v.key
-      local val = string.match(v.path, '/([%w%s]+).app$')
+      local val = string.match(v.path, '/([%w%d%s.]+).app$')
       info = info .. key .. ' ' .. val .. '\n'
     end
     if hs.application.frontmostApplication():path() == '/System/Library/CoreServices/Finder.app' then
       info = info .. 'Caps-T Terminal Here\n'
+    end
+    -- funs
+    for k, v in pairs(funs) do
+      local key = v.useShift and shiftKeys[v.key] or v.key
+      local shortcut = 'Caps-' .. key
+      info = info .. shortcut .. ' ' .. v.name .. '\n'
     end
     info = info .. 'Caps-r F5' -- 最后一个加了 \n 会多一个空行
     hs.alert.show(
