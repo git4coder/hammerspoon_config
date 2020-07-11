@@ -78,6 +78,23 @@ local launchOrFocusWindowByPath = function(path)
   end
 end
 
+-- 彩色化文本
+local fillColor = function(string, color, alpha)
+  if nil == string then
+    string  = ''
+  end
+  if nil == color then
+    color = '#FFFFFF'
+  end
+  if nil == alpha then
+    alpha = 1
+  end
+  return hs.styledtext.new(string ,{
+    color = hs.drawing.color.asRGB({hex = color, alpha = 1}),
+    font = {name = 'Monaco', size = 14}
+  })
+end
+
 -- 为常用工具绑定快捷键
 hs.fnutils.each(
   apps,
@@ -120,13 +137,16 @@ funs.appInfo = {
     local bundleID = hs.application.frontmostApplication():bundleID()
     local path = hs.application.frontmostApplication():path()
     local im = hs.keycodes.currentSourceID()
-    local content = string.format('%s\n%s\n%s\n%s', title, bundleID, path, im)
+    local content = fillColor('    Name ', '#666666') .. fillColor(title, '#FFFFFF') .. '\n'
+    content = content .. fillColor('BundleID ', '#666666') .. fillColor(bundleID, '#FFFFFF') .. '\n'
+    content = content .. fillColor('    Path ', '#666666') .. fillColor(path, '#FFFFFF') .. '\n'
+    content = content .. fillColor('      IM ', '#666666') .. fillColor(im, '#FFFFFF')
     hs.alert.closeAll()
     hs.alert.show(
       content,
       alertStyle
     )
-    hs.pasteboard.setContents(content);
+    hs.pasteboard.setContents(string.format('%s\n%s\n%s\n%s\n', title, bundleID, path, im));
     print('BundleID:', bundleID);
     print('    Path:', path);
   end
@@ -200,23 +220,41 @@ hs.hotkey.bind(
   '/',
   function()
     hs.alert.closeAll();
-    local info = ''
+    local info = fillColor('', '#FFFFFF') -- 开头必须是 hs.styledText ，不能是纯文本否则 hs.alert 的颜色不生效
+    -- 多列显示
+    local cols = 2
+    local appNameMaxLen = 0
+    for _, v in ipairs(apps) do
+      local appName = string.match(v.path, '/([%w%d%s.]+).app$')
+      appNameMaxLen = #appName > appNameMaxLen and #appName or appNameMaxLen
+    end
+    local colWidth = #'caps-? ' + appNameMaxLen
     -- apps
     for k, v in ipairs(apps) do
-      local key = 'Caps-' .. v.key
+      local key = 'caps-' .. v.key
       local val = string.match(v.path, '/([%w%d%s.]+).app$')
-      info = info .. key .. ' ' .. val .. '\n'
+      local item = fillColor(key .. ' ', '#666666') .. fillColor(val, '#FFFFFF')
+      if (k % cols == 0) then
+        item = item .. '\n'
+      else
+        if (#item < colWidth) then
+          item = item .. string.rep(' ', colWidth - #item)
+        end
+        item = item .. '  '
+      end
+      info = info .. item
     end
     if hs.application.frontmostApplication():path() == '/System/Library/CoreServices/Finder.app' then
       info = info .. 'Caps-T Terminal Here\n'
     end
-    -- funs
-    for k, v in pairs(funs) do
-      local key = v.useShift and shiftKeys[v.key] or v.key
-      local shortcut = 'Caps-' .. key
-      info = info .. shortcut .. ' ' .. v.name .. '\n'
-    end
-    info = info .. 'Caps-r F5' -- 最后一个加了 \n 会多一个空行
+    -- funs 
+    -- (不常用，顺序不好控制，不展示这个了)
+    -- for k, v in pairs(funs) do
+    --   local key = v.useShift and shiftKeys[v.key] or v.key
+    --   local shortcut = 'caps-' .. key
+    --   info = info .. shortcut .. ' ' .. v.name .. '\n'
+    -- end
+    -- info = info .. 'caps-r F5' -- 最后一个加了 \n 会多一个空行
     hs.alert.show(
       info,
       alertStyle
