@@ -32,6 +32,28 @@ apps = {
   {key = 'y', path = '/Applications/NeteaseMusic.app'}
 }
 
+local todoFile = '~/Documents/todo.txt' -- 这是默认值，所以此行可删除
+
+alertStyle = {
+  strokeColor = {white = 1, alpha = 0.25 },
+  radius   = 5,
+  textFont = 'Monaco',
+  textSize = 12,
+  atScreenEdge = 0
+}
+
+-- 显示可用快捷键清单
+local shiftKeys = {
+  [':'] = ';',
+  ['"'] = "'",
+  ['<'] = ',',
+  ['>'] = '.',
+  ['?'] = '/',
+  ['{'] = '[',
+  ['}'] = ']',
+  ['|'] = '\\'
+}
+
 --  打开/切换到App(可以在当前 APP 的窗口间切换)
 local launchOrFocusWindowByPath = function(path)
   local toApp  = hs.application.infoForBundlePath(path)
@@ -95,6 +117,18 @@ local fillColor = function(string, color, alpha)
   })
 end
 
+-- 找到需要按shift才能打出的符号所在的键
+local originKey = function(key)
+  local origin = key
+  for k, v in pairs(shiftKeys) do
+    if k == key then
+      origin = v
+      break
+    end
+  end
+  return origin
+end
+
 -- 为常用工具绑定快捷键
 hs.fnutils.each(
   apps,
@@ -117,79 +151,66 @@ hs.fnutils.each(
   end
 )
 
-alertStyle = {
-  strokeColor = {white = 1, alpha = 0.25 },
-  radius   = 5,
-  textFont = 'Monaco',
-  textSize = 12,
-  atScreenEdge = 0
-}
-
-local funs = {}
-
--- 获得当前 APP 的信息
-funs.appInfo = {
-  name = 'Get BundleID',
-  useShift = false, -- 追加到 hyper 里的键
-  key = '.',
-  fun =   function()
-    local title = hs.application.frontmostApplication():title()
-    local bundleID = hs.application.frontmostApplication():bundleID()
-    local path = hs.application.frontmostApplication():path()
-    local im = hs.keycodes.currentSourceID()
-    local content = fillColor('    Name ', '#666666') .. fillColor(title, '#FFFFFF') .. '\n'
-    content = content .. fillColor('BundleID ', '#666666') .. fillColor(bundleID, '#FFFFFF') .. '\n'
-    content = content .. fillColor('    Path ', '#666666') .. fillColor(path, '#FFFFFF') .. '\n'
-    content = content .. fillColor('      IM ', '#666666') .. fillColor(im, '#FFFFFF')
-    hs.alert.closeAll()
-    hs.alert.show(
-      content,
-      alertStyle
-    )
-    hs.pasteboard.setContents(string.format('%s\n%s\n%s\n%s\n', title, bundleID, path, im));
-    print('BundleID:', bundleID);
-    print('    Path:', path);
-  end
-}
-
-local todoFile = '~/Documents/todo.txt'
--- TodoList
-funs.todoAdd = {
-  name = 'TodoList Form',
-  useShift = false, -- 追加到 hyper 里的键
-  key = '\'',
-  fun = function()
-    hs.focus()
-    local file = todoFile
-    local confirm, content = hs.dialog.textPrompt('请输入需要记录的内容', 'File: ' .. file, '', '保存', '取消')
-    print(confirm, content);
-    if ('保存' == confirm) then
-      local script = string.format([[
-        do shell script "echo $(date) - %s >> %s"
-      ]], content, file)
-      print(script)
-      local rs = hs.osascript.applescript(script)
-      if rs == true then
-        hs.alert.show(content .. '已记录')
-      else
-        hs.alert.show(content .. '记录失败', {fillColor = hs.drawing.color.asRGB({hex = '#CC0000', alpha = 1})})
+funs = {
+  {
+    -- 获得当前 APP 的信息
+    name = 'Get BundleID',
+    key = '.',
+    fun =   function()
+      local title = hs.application.frontmostApplication():title()
+      local bundleID = hs.application.frontmostApplication():bundleID()
+      local path = hs.application.frontmostApplication():path()
+      local im = hs.keycodes.currentSourceID()
+      local content = fillColor('    Name ', '#666666') .. fillColor(title, '#FFFFFF') .. '\n'
+      content = content .. fillColor('BundleID ', '#666666') .. fillColor(bundleID, '#FFFFFF') .. '\n'
+      content = content .. fillColor('    Path ', '#666666') .. fillColor(path, '#FFFFFF') .. '\n'
+      content = content .. fillColor('      IM ', '#666666') .. fillColor(im, '#FFFFFF')
+      hs.alert.closeAll()
+      hs.alert.show(
+        content,
+        alertStyle
+      )
+      hs.pasteboard.setContents(string.format('%s\n%s\n%s\n%s\n', title, bundleID, path, im));
+      print('BundleID:', bundleID);
+      print('    Path:', path);
+    end
+  },
+  {
+    -- TodoList
+    name = 'Todo Form',
+    key = "'",
+    fun = function()
+      hs.focus()
+      local file = nil == todoFile and todoFile or '~/Documents/todo.txt'
+      local confirm, content = hs.dialog.textPrompt('请输入需要记录的内容', 'File: ' .. file, '', '保存', '取消')
+      print(confirm, content);
+      if ('保存' == confirm) then
+        local script = string.format([[
+          do shell script "echo $(date) - %s >> %s"
+        ]], content, file)
+        print(script)
+        local rs = hs.osascript.applescript(script)
+        if rs == true then
+          hs.alert.show(content .. '已记录')
+        else
+          hs.alert.show(content .. '记录失败', {fillColor = hs.drawing.color.asRGB({hex = '#CC0000', alpha = 1})})
+        end
       end
     end
-  end
-}
-funs.todoList = {
-  name = 'Todo List',
-  useShift = true, -- 追加到 hyper 里的键
-  key = '\'',
-  fun = function()
-    hs.focus()
-    local file = todoFile
-    local script = string.format([[
-      do shell script "qlmanage -p %s"
-    ]], file)
-    print(script)
-    hs.osascript.applescript(script)
-  end
+  },
+  {
+    name = 'Todo List',
+    key = '"',
+    fun = function()
+      hs.focus()
+      local file = nil == todoFile and todoFile or '~/Documents/todo.txt'
+      local script = string.format([[
+        do shell script "qlmanage -p %s"
+      ]], file)
+      print(script)
+      hs.osascript.applescript(script)
+    end
+  }
 }
 
 -- 为功能绑定快捷键
@@ -198,22 +219,22 @@ hs.fnutils.each(
   function(fun)
     local message = nil
     local hyper = {'ctrl', 'alt', 'cmd'}
-    if fun.useShift then
-      table.insert(hyper, fun.optional)
+    local useShift = false
+    local key = originKey(fun.key)
+    if fun.key ~= key then
+      useShift = true
+    end
+    if useShift then
+      table.insert(hyper, 'shift')
     end
     hs.hotkey.bind(
       hyper,
-      fun.key,
+      key,
       message,
       fun.fun
     )
   end
 )
-
--- 显示可用快捷键清单
-local shiftKeys = {}
-shiftKeys["'"] = '"'
-shiftKeys['/'] = '?'
 
 hs.hotkey.bind(
   {'ctrl', 'alt', 'cmd'},
@@ -221,11 +242,29 @@ hs.hotkey.bind(
   function()
     hs.alert.closeAll();
     local info = fillColor('', '#FFFFFF') -- 开头必须是 hs.styledText ，不能是纯文本否则 hs.alert 的颜色不生效
+
+    -- 合并 apps 和 funs
+    local actions = {}
+    for _, v in ipairs(apps) do
+      table.insert(actions, v)
+    end
+    for _, v in ipairs(funs) do
+      table.insert(actions, v)
+    end
+
+    -- terminal here 功能在系统偏好的快捷方式里添加的，这里只提示下具体的按键
+    if hs.application.frontmostApplication():path() == '/System/Library/CoreServices/Finder.app' then
+      table.insert(actions, {
+        name = 'Terminal Here',
+        key = 'T'
+      })
+    end
+
     -- 多列显示
     local cols = 2
     local appNameMaxLen = 0
-    for _, v in ipairs(apps) do
-      local appName = string.match(v.path, '/([%w%d%s.]+).app$')
+    for _, v in ipairs(actions) do
+      local appName = nil ~= v.name and v.name or string.match(v.path, '/([%w%d%s.]+).app$')
       appNameMaxLen = #appName > appNameMaxLen and #appName or appNameMaxLen
     end
     local colWidth = #'caps-? ' + appNameMaxLen
@@ -233,17 +272,17 @@ hs.hotkey.bind(
       cols = 1
     end
 
-    -- apps 竖排
-    local totalRow = math.ceil(#apps / cols) -- 0-4,5-9,10-13 size*(p-1)
+    -- actions 竖排
+    local totalRow = math.ceil(#actions / cols) -- 0-4,5-9,10-13 size*(p-1)
     for i=1,totalRow,1 do
       local row = fillColor('', '#FFFFFF')
       for j=0,cols-1,1 do
-        local v = apps[i + j * totalRow]
+        local v = actions[i + j * totalRow]
         if nil == v then
           break
         end
         local key = 'caps-' .. v.key
-        local val = string.match(v.path, '/([%w%d%s.]+).app$')
+        local val = nil ~= v.name and v.name or string.match(v.path, '/([%w%d%s.]+).app$')
         local item = fillColor(key .. ' ', '#666666') .. fillColor(val, '#FFFFFF')
         if (#item < colWidth) then
           item = item .. string.rep(' ', colWidth - #item)
@@ -288,11 +327,6 @@ hs.hotkey.bind(
     --   info = info .. shortcut .. ' ' .. v.name .. '\n'
     -- end
     -- info = info .. 'caps-r F5' -- 最后一个加了 \n 会多一个空行
-
-    -- terminal here
-    if hs.application.frontmostApplication():path() == '/System/Library/CoreServices/Finder.app' then
-      info = info .. fillColor('\ncaps-T ', '#666666') .. fillColor('Terminal Here', '#FFFFFF')
-    end
 
     hs.alert.show(
       info,
