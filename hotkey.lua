@@ -58,6 +58,7 @@ local shiftKeys = {
 local launchOrFocusWindowByPath = function(path)
   local toApp  = hs.application.infoForBundlePath(path)
   return function()
+    hs.alert.closeAll();
     local curApp = hs.application.frontmostApplication()
     print(string.match(path, '/([%w%d%s.]+).app$') .. ' <-- ' .. string.match(curApp:path(), '/([%w%d%s.]+).app$'))
     if curApp:path() == path then -- 当前 APP 就是要打开的 APP 时找到当前 APP 的下一个窗口
@@ -180,6 +181,7 @@ funs = {
     name = 'Todo Form',
     key = "'",
     fun = function()
+      hs.alert.closeAll();
       hs.focus()
       local file = nil ~= todoFile and todoFile or '~/Documents/todo.txt'
       local confirm, content = hs.dialog.textPrompt('请输入需要记录的内容', 'File: ' .. file, '', '保存', '取消')
@@ -202,6 +204,7 @@ funs = {
     name = 'Todo List',
     key = '"',
     fun = function()
+      hs.alert.closeAll();
       hs.focus()
       local file = nil ~= todoFile and todoFile or '~/Documents/todo.txt'
       local script = string.format([[
