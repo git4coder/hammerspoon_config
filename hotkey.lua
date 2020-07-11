@@ -265,6 +265,19 @@ hs.hotkey.bind(
       })
     end
 
+    table.sort(actions, function(e1, e2)
+      local e1Key = string.byte(string.upper(e1.key)) -- ascii
+      local e2Key = string.byte(string.upper(e2.key))
+      -- 先排字母，后排符号，字母前的符号都移到后边
+      if e1Key < 65 then
+        e1Key = e1Key + 128
+      end
+      if e2Key < 65 then
+        e2Key = e2Key + 128
+      end
+      return e1Key < e2Key
+    end)
+
     -- 多列显示
     local cols = 2
     local appNameMaxLen = 0
