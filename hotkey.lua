@@ -181,7 +181,7 @@ funs = {
     key = "'",
     fun = function()
       hs.focus()
-      local file = nil == todoFile and todoFile or '~/Documents/todo.txt'
+      local file = nil ~= todoFile and todoFile or '~/Documents/todo.txt'
       local confirm, content = hs.dialog.textPrompt('请输入需要记录的内容', 'File: ' .. file, '', '保存', '取消')
       print(confirm, content);
       if ('保存' == confirm) then
@@ -203,7 +203,7 @@ funs = {
     key = '"',
     fun = function()
       hs.focus()
-      local file = nil == todoFile and todoFile or '~/Documents/todo.txt'
+      local file = nil ~= todoFile and todoFile or '~/Documents/todo.txt'
       local script = string.format([[
         do shell script "qlmanage -p %s"
       ]], file)
