@@ -193,9 +193,11 @@ funs = {
         print(script)
         local rs = hs.osascript.applescript(script)
         if rs == true then
-          hs.alert.show(content .. '已记录')
+          hs.alert.show(fillColor('已记录 ', '#4caf50') .. fillColor(content, '#FFFFFF'))
         else
-          hs.alert.show(content .. '记录失败', {fillColor = hs.drawing.color.asRGB({hex = '#CC0000', alpha = 1})})
+          hs.pasteboard.setContents(content);
+          hs.alert.show(fillColor('记录失败，已存入剪贴板 ', '#f44336') .. fillColor(content, '#FFFFFF'))
+          print('save todo fail:', content)
         end
       end
     end
