@@ -229,7 +229,41 @@ hs.hotkey.bind(
       appNameMaxLen = #appName > appNameMaxLen and #appName or appNameMaxLen
     end
     local colWidth = #'caps-? ' + appNameMaxLen
-    -- apps
+    if cols <= 0 then
+      cols = 1
+    end
+
+    -- apps 竖排
+    local totalRow = math.ceil(#apps / cols) -- 0-4,5-9,10-13 size*(p-1)
+    for i=1,totalRow,1 do
+      local row = fillColor('', '#FFFFFF')
+      for j=0,cols-1,1 do
+        local v = apps[i + j * totalRow]
+        if nil == v then
+          break
+        end
+        local key = 'caps-' .. v.key
+        local val = string.match(v.path, '/([%w%d%s.]+).app$')
+        local item = fillColor(key .. ' ', '#666666') .. fillColor(val, '#FFFFFF')
+        if (#item < colWidth) then
+          item = item .. string.rep(' ', colWidth - #item)
+        end
+        -- 列加间距
+        if j ~= cols - 1 then
+          item = item .. '  '
+        end
+        -- 合并列为行
+        row = row .. item
+      end
+      info = info .. row
+      -- 不是最后一页的话加个换行
+      if (i ~= totalRow) then
+        info = info .. '\n'
+      end
+    end
+
+    --[[
+    -- apps 横排
     for k, v in ipairs(apps) do
       local key = 'caps-' .. v.key
       local val = string.match(v.path, '/([%w%d%s.]+).app$')
@@ -244,9 +278,8 @@ hs.hotkey.bind(
       end
       info = info .. item
     end
-    if hs.application.frontmostApplication():path() == '/System/Library/CoreServices/Finder.app' then
-      info = info .. 'Caps-T Terminal Here\n'
-    end
+    ]]
+
     -- funs 
     -- (不常用，顺序不好控制，不展示这个了)
     -- for k, v in pairs(funs) do
@@ -255,6 +288,12 @@ hs.hotkey.bind(
     --   info = info .. shortcut .. ' ' .. v.name .. '\n'
     -- end
     -- info = info .. 'caps-r F5' -- 最后一个加了 \n 会多一个空行
+
+    -- terminal here
+    if hs.application.frontmostApplication():path() == '/System/Library/CoreServices/Finder.app' then
+      info = info .. fillColor('\ncaps-T ', '#666666') .. fillColor('Terminal Here', '#FFFFFF')
+    end
+
     hs.alert.show(
       info,
       alertStyle
