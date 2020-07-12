@@ -34,8 +34,84 @@ apps = {
 
 local todoFile = '~/Documents/todo.txt' -- 这是默认值，所以此行可删除
 
+funs = {
+  {
+    -- 获得当前 APP 的信息
+    name = 'Get BundleID',
+    key = '.',
+    fun =   function()
+      local title = hs.application.frontmostApplication():title()
+      local bundleID = hs.application.frontmostApplication():bundleID()
+      local path = hs.application.frontmostApplication():path()
+      local im = hs.keycodes.currentSourceID()
+      local content = fillColor('    Name ', '#666666') .. fillColor(title, '#FFFFFF') .. '\n'
+      content = content .. fillColor('BundleID ', '#666666') .. fillColor(bundleID, '#FFFFFF') .. '\n'
+      content = content .. fillColor('    Path ', '#666666') .. fillColor(path, '#FFFFFF') .. '\n'
+      content = content .. fillColor('      IM ', '#666666') .. fillColor(im, '#FFFFFF')
+      hs.alert.closeAll()
+      hs.alert.show(
+        content,
+        alertStyle
+      )
+      hs.pasteboard.setContents(string.format('%s\n%s\n%s\n%s\n', title, bundleID, path, im));
+      print('BundleID:', bundleID);
+      print('    Path:', path);
+    end
+  },
+  {
+    -- TodoList
+    name = 'Todo Form',
+    key = "'",
+    fun = function()
+      hs.alert.closeAll();
+      hs.focus()
+      local file = nil ~= todoFile and todoFile or '~/Documents/todo.txt'
+      local confirm, content = hs.dialog.textPrompt('请输入需要记录的内容', 'File: ' .. file, '', '保存', '取消')
+      print(confirm, content);
+      if ('保存' == confirm and '' ~= content) then
+        local script = string.format([[
+          do shell script "echo $(date) - %s >> %s"
+        ]], content, file)
+        print(script)
+        local rs = hs.osascript.applescript(script)
+        if rs == true then
+          hs.alert.show(fillColor('已记录 ', '#4caf50') .. fillColor(content, '#FFFFFF'))
+        else
+          hs.pasteboard.setContents(content);
+          hs.alert.show(fillColor('记录失败，已存入剪贴板 ', '#f44336') .. fillColor(content, '#FFFFFF'))
+          print('save todo fail:', content)
+        end
+      end
+    end
+  },
+  {
+    name = 'Todo List',
+    key = '"',
+    fun = function()
+      hs.alert.closeAll();
+      hs.focus()
+      local file = nil ~= todoFile and todoFile or '~/Documents/todo.txt'
+      local script = string.format([[
+        do shell script "qlmanage -p %s"
+      ]], file)
+      print(script)
+      hs.osascript.applescript(script)
+    end
+  },
+  {
+    name = 'F5',
+    key = 'r'
+  },
+  {
+    name = 'This Help',
+    key = '/'
+  }
+}
+
+-- 帮助提示的样式
 alertStyle = {
-  strokeColor = {white = 1, alpha = 0.25 },
+  -- strokeColor = {white = 1, alpha = 0.25 },
+  strokeColor = hs.drawing.color.asRGB({hex = '#FFFFFF', alpha = 0.35}),
   radius   = 5,
   textFont = 'Monaco',
   textSize = 12,
@@ -44,6 +120,19 @@ alertStyle = {
 
 -- 显示可用快捷键清单
 local shiftKeys = {
+  ['~'] = '`',
+  ['!'] = '1',
+  ['@'] = '2',
+  ['#'] = '3',
+  ['$'] = '4',
+  ['%'] = '5',
+  ['^'] = '6',
+  ['&'] = '7',
+  ['*'] = '8',
+  ['('] = '9',
+  [')'] = '0',
+  ['_'] = '-',
+  ['+'] = '=',
   [':'] = ';',
   ['"'] = "'",
   ['<'] = ',',
@@ -118,126 +207,46 @@ local fillColor = function(string, color, alpha)
   })
 end
 
--- 找到需要按shift才能打出的符号所在的键
+-- 找到需要按shift才能打出的符号字母所在的键
 local originKey = function(key)
   local origin = key
-  for k, v in pairs(shiftKeys) do
-    if k == key then
-      origin = v
-      break
-    end
-  end
+  -- 检查标点符号
+  origin = nil ~= shiftKeys[key] and shiftKeys[key] or origin
+  -- 检查字母
+  origin = nil ~= string.match(key, '[A-Z]') and string.lower(key) or origin
   return origin
+end
+
+local bindHotkey = function(app, message)
+  local hyper = {'ctrl', 'alt', 'cmd'}
+  local key = originKey(app.key)
+  if app.key ~= key then
+    table.insert(hyper, 'shift')
+  end
+  
+  if nil ~= app.fun or nil ~= app.path then
+    hs.hotkey.bind(
+      hyper,
+      key,
+      message,
+      app.fun or launchOrFocusWindowByPath(app.path)
+    )
+  end
 end
 
 -- 为常用工具绑定快捷键
 hs.fnutils.each(
   apps,
   function(app)
-    -- local message = string.match(app.path, '/([%w%s]+).app$') -- nil
-    local message = nil
-    local hyper = {'ctrl', 'alt', 'cmd'}
-    if string.match(app.key, '[A-Z]') then
-      table.insert(hyper, 'shift')
-    end
-    hs.hotkey.bind(
-      hyper,
-      app.key,
-      message,
-      -- function()
-      --   hs.application.launchOrFocus(app.path)
-      -- end
-      launchOrFocusWindowByPath(app.path)
-    )
+    bindHotkey(app)
   end
 )
-
-funs = {
-  {
-    -- 获得当前 APP 的信息
-    name = 'Get BundleID',
-    key = '.',
-    fun =   function()
-      local title = hs.application.frontmostApplication():title()
-      local bundleID = hs.application.frontmostApplication():bundleID()
-      local path = hs.application.frontmostApplication():path()
-      local im = hs.keycodes.currentSourceID()
-      local content = fillColor('    Name ', '#666666') .. fillColor(title, '#FFFFFF') .. '\n'
-      content = content .. fillColor('BundleID ', '#666666') .. fillColor(bundleID, '#FFFFFF') .. '\n'
-      content = content .. fillColor('    Path ', '#666666') .. fillColor(path, '#FFFFFF') .. '\n'
-      content = content .. fillColor('      IM ', '#666666') .. fillColor(im, '#FFFFFF')
-      hs.alert.closeAll()
-      hs.alert.show(
-        content,
-        alertStyle
-      )
-      hs.pasteboard.setContents(string.format('%s\n%s\n%s\n%s\n', title, bundleID, path, im));
-      print('BundleID:', bundleID);
-      print('    Path:', path);
-    end
-  },
-  {
-    -- TodoList
-    name = 'Todo Form',
-    key = "'",
-    fun = function()
-      hs.alert.closeAll();
-      hs.focus()
-      local file = nil ~= todoFile and todoFile or '~/Documents/todo.txt'
-      local confirm, content = hs.dialog.textPrompt('请输入需要记录的内容', 'File: ' .. file, '', '保存', '取消')
-      print(confirm, content);
-      if ('保存' == confirm and '' ~= content) then
-        local script = string.format([[
-          do shell script "echo $(date) - %s >> %s"
-        ]], content, file)
-        print(script)
-        local rs = hs.osascript.applescript(script)
-        if rs == true then
-          hs.alert.show(fillColor('已记录 ', '#4caf50') .. fillColor(content, '#FFFFFF'))
-        else
-          hs.pasteboard.setContents(content);
-          hs.alert.show(fillColor('记录失败，已存入剪贴板 ', '#f44336') .. fillColor(content, '#FFFFFF'))
-          print('save todo fail:', content)
-        end
-      end
-    end
-  },
-  {
-    name = 'Todo List',
-    key = '"',
-    fun = function()
-      hs.alert.closeAll();
-      hs.focus()
-      local file = nil ~= todoFile and todoFile or '~/Documents/todo.txt'
-      local script = string.format([[
-        do shell script "qlmanage -p %s"
-      ]], file)
-      print(script)
-      hs.osascript.applescript(script)
-    end
-  }
-}
 
 -- 为功能绑定快捷键
 hs.fnutils.each(
   funs,
   function(fun)
-    local message = nil
-    local hyper = {'ctrl', 'alt', 'cmd'}
-    local useShift = false
-    local key = originKey(fun.key)
-    if fun.key ~= key then
-      useShift = true
-    end
-    if useShift then
-      table.insert(hyper, 'shift')
-    end
-    hs.hotkey.bind(
-      hyper,
-      key,
-      message,
-      fun.fun
-    )
+    bindHotkey(fun)
   end
 )
 
@@ -318,33 +327,6 @@ hs.hotkey.bind(
         info = info .. '\n'
       end
     end
-
-    --[[
-    -- apps 横排
-    for k, v in ipairs(apps) do
-      local key = 'caps-' .. v.key
-      local val = string.match(v.path, '/([%w%d%s.]+).app$')
-      local item = fillColor(key .. ' ', '#666666') .. fillColor(val, '#FFFFFF')
-      if (k % cols == 0) then
-        item = item .. '\n'
-      else
-        if (#item < colWidth) then
-          item = item .. string.rep(' ', colWidth - #item)
-        end
-        item = item .. '  '
-      end
-      info = info .. item
-    end
-    ]]
-
-    -- funs 
-    -- (不常用，顺序不好控制，不展示这个了)
-    -- for k, v in pairs(funs) do
-    --   local key = v.useShift and shiftKeys[v.key] or v.key
-    --   local shortcut = 'caps-' .. key
-    --   info = info .. shortcut .. ' ' .. v.name .. '\n'
-    -- end
-    -- info = info .. 'caps-r F5' -- 最后一个加了 \n 会多一个空行
 
     hs.alert.show(
       info,
