@@ -1,12 +1,15 @@
--- 打开项目所在文件夹(用了 finder 的设置项“开启新 Finder 时打开：”，这里不要了)
--- hs.hotkey.bind({'cmd'}, 'e',
---   function()
---     hs.execute('open ~/Projects')
---   end
--- )
+--[[
 
--- 打开常用工具
-apps = {
+  为 App 绑定打开或切换到的全局快捷键
+
+  提醒：
+    不要连续重复切换微信开发者工具，会导致它在 dock 里一直弹跳无法关闭，需要`sudo killall launchservicesd && sudo killall Dock`才能关掉
+    需要使用 Karabiner-Elements.app 将 CapsLock 键改为组合按时变为 Ctrl + Option + Command
+
+]]
+
+-- 指定需要绑快捷键的 App
+local apps = {
   {key = 'a', path = '/Applications/Affinity Photo.app'},
   {key = 'b', path = '/Applications/Bear.app'},
   {key = 'B', path = '/Applications/Blender.app'},
@@ -34,82 +37,8 @@ apps = {
 
 local todoFile = '~/Documents/todo.txt' -- 这是默认值，所以此行可删除
 
-funs = {
-  {
-    -- 获得当前 APP 的信息
-    name = 'Get BundleID',
-    key = '.',
-    fun =   function()
-      local title = hs.application.frontmostApplication():title()
-      local bundleID = hs.application.frontmostApplication():bundleID()
-      local path = hs.application.frontmostApplication():path()
-      local im = hs.keycodes.currentSourceID()
-      local content = fillColor('    Name ', '#666666') .. fillColor(title, '#FFFFFF') .. '\n'
-      content = content .. fillColor('BundleID ', '#666666') .. fillColor(bundleID, '#FFFFFF') .. '\n'
-      content = content .. fillColor('    Path ', '#666666') .. fillColor(path, '#FFFFFF') .. '\n'
-      content = content .. fillColor('      IM ', '#666666') .. fillColor(im, '#FFFFFF')
-      hs.alert.closeAll()
-      hs.alert.show(
-        content,
-        alertStyle
-      )
-      hs.pasteboard.setContents(string.format('%s\n%s\n%s\n%s\n', title, bundleID, path, im));
-      print('BundleID:', bundleID);
-      print('    Path:', path);
-    end
-  },
-  {
-    -- TodoList
-    name = 'Todo Form',
-    key = "'",
-    fun = function()
-      hs.alert.closeAll();
-      hs.focus()
-      local file = nil ~= todoFile and todoFile or '~/Documents/todo.txt'
-      local confirm, content = hs.dialog.textPrompt('请输入需要记录的内容', 'File: ' .. file, '', '保存', '取消')
-      print(confirm, content);
-      if ('保存' == confirm and '' ~= content) then
-        local script = string.format([[
-          do shell script "echo $(date) - %s >> %s"
-        ]], content, file)
-        print(script)
-        local rs = hs.osascript.applescript(script)
-        if rs == true then
-          hs.alert.show(fillColor('已记录 ', '#4caf50') .. fillColor(content, '#FFFFFF'))
-        else
-          hs.pasteboard.setContents(content);
-          hs.alert.show(fillColor('记录失败，已存入剪贴板 ', '#f44336') .. fillColor(content, '#FFFFFF'))
-          print('save todo fail:', content)
-        end
-      end
-    end
-  },
-  {
-    name = 'Todo List',
-    key = '"',
-    fun = function()
-      hs.alert.closeAll();
-      hs.focus()
-      local file = nil ~= todoFile and todoFile or '~/Documents/todo.txt'
-      local script = string.format([[
-        do shell script "qlmanage -p %s"
-      ]], file)
-      print(script)
-      hs.osascript.applescript(script)
-    end
-  },
-  {
-    name = 'F5',
-    key = 'r'
-  },
-  {
-    name = 'This Help',
-    key = '/'
-  }
-}
-
 -- 帮助提示的样式
-alertStyle = {
+local alertStyle = {
   -- strokeColor = {white = 1, alpha = 0.25 },
   strokeColor = hs.drawing.color.asRGB({hex = '#FFFFFF', alpha = 0.35}),
   radius   = 5,
@@ -118,48 +47,25 @@ alertStyle = {
   atScreenEdge = 0
 }
 
--- 显示可用快捷键清单
-local shiftKeys = {
-  ['~'] = '`',
-  ['!'] = '1',
-  ['@'] = '2',
-  ['#'] = '3',
-  ['$'] = '4',
-  ['%'] = '5',
-  ['^'] = '6',
-  ['&'] = '7',
-  ['*'] = '8',
-  ['('] = '9',
-  [')'] = '0',
-  ['_'] = '-',
-  ['+'] = '=',
-  [':'] = ';',
-  ['"'] = "'",
-  ['<'] = ',',
-  ['>'] = '.',
-  ['?'] = '/',
-  ['{'] = '[',
-  ['}'] = ']',
-  ['|'] = '\\'
-}
-
 --  打开/切换到App(可以在当前 APP 的窗口间切换)
 local launchOrFocusWindowByPath = function(path)
-  local toApp  = hs.application.infoForBundlePath(path)
   return function()
     hs.alert.closeAll();
     local curApp = hs.application.frontmostApplication()
-    print(string.match(path, '/([%w%d%s.]+).app$') .. ' <-- ' .. string.match(curApp:path(), '/([%w%d%s.]+).app$'))
+    -- print(string.match(path, '/([%w%d%s.]+).app$') .. ' <-- ' .. string.match(curApp:path(), '/([%w%d%s.]+).app$'))
     if curApp:path() == path then -- 当前 APP 就是要打开的 APP 时找到当前 APP 的下一个窗口
       -- 获取 APP 的所有窗口（不含 toast、scrollarea 等窗体）
       local wins = hs.fnutils.filter(curApp:allWindows(), function(item)
         return item:role() == "AXWindow"
       end)
+      --[[
+      -- 调试用
       print('#wins: ' .. #wins .. ' <-- ' .. string.match(path, '/([%w%d%s.]+).app$'))
       for i,v in ipairs(curApp:allWindows()) do
         print(i, v:role(), v:title())
       end
-      -- 只有一个窗口时直接返回（关闭所有窗口后程序并没有退出，所以写的是 <= 而不是 =，finder 有一个窗口是“桌面”）
+      ]]
+      -- 只有一个窗口时直接返回
       if #wins == 1 then
         return
       end
@@ -202,24 +108,144 @@ local fillColor = function(string, color, alpha)
     alpha = 1
   end
   return hs.styledtext.new(string ,{
-    color = hs.drawing.color.asRGB({hex = color, alpha = 1}),
+    color = hs.drawing.color.asRGB({hex = color, alpha}),
     font = {name = 'Monaco', size = 14}
   })
 end
 
--- 找到需要按shift才能打出的符号字母所在的键
-local originKey = function(key)
-  local origin = key
-  -- 检查标点符号
-  origin = nil ~= shiftKeys[key] and shiftKeys[key] or origin
-  -- 检查字母
-  origin = nil ~= string.match(key, '[A-Z]') and string.lower(key) or origin
-  return origin
-end
+-- 指定需要绑定快捷键的功能
+local funs = {
+  -- {
+  --   name = 'MoveTo Right Desktop',
+  --   key = 'right',
+  --   fun = function()
+  --     if hs.window.focusedWindow() then
+  --       hs.window.focusedWindow():focusWindowEast()
+  --     end
+  --   end
+  -- },
+  -- {
+  --   name = 'MoveTo Left Desktop',
+  --   key = 'left',
+  --   fun = function()
+  --     if hs.window.focusedWindow() then
+  --       hs.window.focusedWindow():focusWindowWest()
+  --     end
+  --   end
+  -- },
+  {
+    -- 获得当前 APP 的信息
+    name = 'AppInfo',
+    key = '.',
+    fun =   function()
+      local title = hs.application.frontmostApplication():title()
+      local bundleID = hs.application.frontmostApplication():bundleID()
+      local path = hs.application.frontmostApplication():path()
+      local im = hs.keycodes.currentSourceID()
+      local content = fillColor('    Name ', '#666666') .. fillColor(title, '#FFFFFF') .. '\n'
+      content = content .. fillColor('BundleID ', '#666666') .. fillColor(bundleID, '#FFFFFF') .. '\n'
+      content = content .. fillColor('    Path ', '#666666') .. fillColor(path, '#FFFFFF') .. '\n'
+      content = content .. fillColor('      IM ', '#666666') .. fillColor(im, '#FFFFFF')
+      hs.alert.closeAll()
+      hs.alert.show(
+        content,
+        alertStyle
+      )
+      hs.pasteboard.setContents(string.format('%s\n%s\n%s\n%s\n', title, bundleID, path, im)); -- 复制到剪贴板
+      print('BundleID:', bundleID);
+      print('    Path:', path);
+    end
+  },
+  {
+    -- todo form
+    name = 'Todo Form',
+    key = "'",
+    fun = function()
+      hs.alert.closeAll();
+      hs.focus()
+      local file = nil ~= todoFile and todoFile or '~/Documents/todo.txt'
+      local confirm, content = hs.dialog.textPrompt('请输入需要记录的内容', 'File: ' .. file, '', '保存', '取消')
+      print(confirm, content);
+      if ('保存' == confirm and '' ~= content) then
+        local script = string.format([[
+          do shell script "echo $(date) - %s >> %s"
+        ]], content, file)
+        print(script)
+        local rs = hs.osascript.applescript(script)
+        if rs == true then
+          hs.alert.show(fillColor('已记录 ', '#4caf50') .. fillColor(content, '#FFFFFF'))
+        else
+          -- 保存失败时存入剪贴板并在控制台输出
+          hs.pasteboard.setContents(content);
+          hs.alert.show(fillColor('记录失败，已存入剪贴板 ', '#f44336') .. fillColor(content, '#FFFFFF'))
+          print('save todo fail:', content)
+        end
+      end
+    end
+  },
+  {
+    name = 'Todo List',
+    key = '"',
+    fun = function()
+      hs.alert.closeAll();
+      hs.focus()
+      local file = nil ~= todoFile and todoFile or '~/Documents/todo.txt'
+      local script = string.format([[
+        do shell script "qlmanage -p %s"
+      ]], file)
+      print(script)
+      hs.osascript.applescript(script)
+    end
+  },
+  {
+    name = 'F5',
+    key = 'r'
+  },
+  {
+    name = 'Help',
+    key = '/'
+  }
+}
 
-local bindHotkey = function(app, message)
-  local hyper = {'ctrl', 'alt', 'cmd'}
-  local key = originKey(app.key)
+-- 为 apps 和 funs 绑定快捷键的方法
+local bindHotkey = function(app)
+  local hyper = {'ctrl', 'alt', 'cmd'} -- 不要加 shift，shift 在使用“大写字母”、“需要按Shift才能输入的符号”时会自动补上
+  -- 找到需要按shift才能打出的符号字母所在的键
+  local getOriginKey = function(key)
+    local origin = key
+    -- 需要按 Shift 才能输出的按键
+    local shiftKeys = {
+      ['~'] = '`',
+      ['!'] = '1',
+      ['@'] = '2',
+      ['#'] = '3',
+      ['$'] = '4',
+      ['%'] = '5',
+      ['^'] = '6',
+      ['&'] = '7',
+      ['*'] = '8',
+      ['('] = '9',
+      [')'] = '0',
+      ['_'] = '-',
+      ['+'] = '=',
+      [':'] = ';',
+      ['"'] = "'",
+      ['<'] = ',',
+      ['>'] = '.',
+      ['?'] = '/',
+      ['{'] = '[',
+      ['}'] = ']',
+      ['|'] = '\\'
+    }
+    -- 检查标点符号
+    origin = shiftKeys[key] or origin
+    -- 检查字母
+    origin = nil ~= string.match(key, '[A-Z]') and string.lower(key) or origin
+    return origin
+  end
+  local key = getOriginKey(app.key) -- 找到大写对应的小写按键、“上档符号”所在的按键（比如“E“在键“e”上、“#”的键是“3”、“?”的键在“/”上）
+  local message = nil
+  -- message = nil ~= app.path and string.match(app.path, '/([%w%d%s.]+).app$') or nil
   if app.key ~= key then
     table.insert(hyper, 'shift')
   end
@@ -250,12 +276,14 @@ hs.fnutils.each(
   end
 )
 
+-- 显示帮助
 hs.hotkey.bind(
   {'ctrl', 'alt', 'cmd'},
   '/',
   function()
     hs.alert.closeAll();
     local info = fillColor('', '#FFFFFF') -- 开头必须是 hs.styledText ，不能是纯文本否则 hs.alert 的颜色不生效
+    local capsLockSymbol = 'caps' -- '⇪'
 
     -- 合并 apps 和 funs
     local actions = {}
@@ -266,7 +294,7 @@ hs.hotkey.bind(
       table.insert(actions, v)
     end
 
-    -- terminal here 功能在系统偏好的快捷方式里添加的，这里只提示下具体的按键
+    -- terminal here 功能：系统偏好设置 > 键盘 > 快捷键 > 服务 > 新键位于文件夹位置的终端标签页，打勾并添加快捷键“⌃⌥⇧⌘T”
     if hs.application.frontmostApplication():path() == '/System/Library/CoreServices/Finder.app' then
       table.insert(actions, {
         name = 'Terminal Here',
@@ -294,9 +322,20 @@ hs.hotkey.bind(
       local appName = nil ~= v.name and v.name or string.match(v.path, '/([%w%d%s.]+).app$')
       appNameMaxLen = #appName > appNameMaxLen and #appName or appNameMaxLen
     end
-    local colWidth = #'caps-? ' + appNameMaxLen
+    local colWidth = #(capsLockSymbol .. '-? ') + appNameMaxLen
     if cols <= 0 then
       cols = 1
+    end
+
+    -- 把单词表示的按键转为单个符号（防止显示时错位）
+    local keyName2KeySymbol = function(name)
+      local data = {
+        left = '←',
+        right = '→',
+        up = '↑',
+        down = '↓'
+      }
+      return data[name] or name
     end
 
     -- actions 竖排
@@ -308,11 +347,12 @@ hs.hotkey.bind(
         if nil == v then
           break
         end
-        local key = 'caps-' .. v.key
+        local key = capsLockSymbol .. '-' .. keyName2KeySymbol(v.key)
         local val = nil ~= v.name and v.name or string.match(v.path, '/([%w%d%s.]+).app$')
         local item = fillColor(key .. ' ', '#666666') .. fillColor(val, '#FFFFFF')
-        if (#item < colWidth) then
-          item = item .. string.rep(' ', colWidth - #item)
+        local itemLen = #(capsLockSymbol .. '-? ') + #val --  不使用 #item 是因为“←”等的长度不是1，可能是2、3（取决于字符的 utf8 长度），会导致对不齐
+        if (itemLen < colWidth) then
+          item = item .. string.rep(' ', colWidth - itemLen)
         end
         -- 列加间距
         if j ~= cols - 1 then
