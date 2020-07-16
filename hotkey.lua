@@ -35,6 +35,7 @@ local apps = {
   {key = 'y', path = '/Applications/NeteaseMusic.app'}
 }
 
+local hyper = {'ctrl', 'alt', 'cmd'} -- 不要加 shift，shift 在使用“大写字母”、“需要按Shift才能输入的符号”时会自动补上
 local todoFile = '~/Documents/todo.txt' -- 这是默认值，所以此行可删除
 
 -- 帮助提示的样式
@@ -207,9 +208,31 @@ local funs = {
   }
 }
 
+function table.filter(t, fn)
+    local n = {}
+    for k, v in pairs(t) do
+        local item = fn(v, k, t)
+        if item then
+            table.insert(n, v)
+        end
+    end
+    return n
+end
+
+function table.map(t, fn)
+    local n = {}
+    for k, v in pairs(t) do
+        local item = fn(v, k, t)
+        table.insert(n, item)
+    end
+    return n
+end
+
+local hyper = table.filter(hyper, function(v) return v ~= 'shift' end) -- 排除 shift
+
 -- 为 apps 和 funs 绑定快捷键的方法
 local bindHotkey = function(app)
-  local hyper = {'ctrl', 'alt', 'cmd'} -- 不要加 shift，shift 在使用“大写字母”、“需要按Shift才能输入的符号”时会自动补上
+  local hyper = table.map(hyper, function(v) return v end) -- clone
   -- 找到需要按shift才能打出的符号字母所在的键
   local getOriginKey = function(key)
     local origin = key
@@ -278,7 +301,7 @@ hs.fnutils.each(
 
 -- 显示帮助
 hs.hotkey.bind(
-  {'ctrl', 'alt', 'cmd'},
+  hyper,
   '/',
   function()
     hs.alert.closeAll();
