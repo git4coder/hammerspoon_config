@@ -38,14 +38,17 @@ local apps = {
 local hyper = {'ctrl', 'alt', 'cmd'} -- 不要加 shift，shift 在使用“大写字母”、“需要按Shift才能输入的符号”时会自动补上
 local todoFile = '~/Documents/todo.txt' -- 这是默认值，所以此行可删除
 
--- 帮助提示的样式
+-- 帮助信息的样式
 local alertStyle = {
-  -- strokeColor = {white = 1, alpha = 0.25 },
-  strokeColor = hs.drawing.color.asRGB({hex = '#FFFFFF', alpha = 0.35}),
-  radius   = 5,
-  textFont = 'Monaco',
-  textSize = 12,
-  atScreenEdge = 0
+  textColor = hs.drawing.color.asRGB({hex = '#FFFFFF', alpha = 1.00}), -- 文本色
+  fillColor = hs.drawing.color.asRGB({hex = '#000000', alpha = 0.75}), -- 背景色
+  strokeColor = hs.drawing.color.asRGB({hex = '#FFFFFF', alpha = 0.35}), -- 边框色
+  radius   = 5, -- 边框圆角半径
+  textFont = 'Monaco', -- 字体
+  textSize = 12, -- 字号
+  atScreenEdge = 0, -- 显示位置：0: screen center (default); 1: top edge; 2: bottom edge
+  fadeInDuration = 0, -- 渐现耗时
+  fadeOutDuration = 0.15 -- 渐隐耗时
 }
 
 --  打开/切换到App(可以在当前 APP 的窗口间切换)
@@ -109,7 +112,7 @@ local fillColor = function(string, color, alpha)
     alpha = 1
   end
   return hs.styledtext.new(string ,{
-    color = hs.drawing.color.asRGB({hex = color, alpha}),
+    color = hs.drawing.color.asRGB({hex = color, alpha = alpha}),
     font = {name = 'Monaco', size = 14}
   })
 end

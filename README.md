@@ -6,25 +6,16 @@
 
 ## 用法
 
-1. `caps + 字母/数字` 打开指定的 App
+1. `caps + 字符` 打开指定的 App
 1. `caps + ?` 显示已绑定快捷键的 App
 
 连按同一个快捷键可以在已打开的 App 的各窗口间循环切换
 
-## 文件清单
+## 配置
 
-> 以下文件需要在 init.lua 中启用
+编辑 hotkey.lua，在 `apps` 中修改 app 及其快捷键；
 
-1. `hotkey.lua` 为常用 App 绑定快捷键（主要是这个功能）
-1. `ime.lua` 切换到中文输入法（废弃未使用）
-1. `winSwitch.lua` 类似 cmd+tab 的窗口切换（废弃未使用）
-1. `work.lua` 根据位置切换 wifi（废弃未使用）
-
-## 增加 App 或修改绑定的按键
-
-编辑 hotkey.lua，在 apps 中修改；
-
-**注意 key 是区分大小写的**，当设置为大写时快捷按需要增加一个 sift，例：
+**注意 key 是区分大小写的**，当设置为大写时快捷按需要增加一个 shift，例：
 
 ```
 'key' = 'A': capslock + shift + a
@@ -34,6 +25,15 @@
 'key' = '<': capslock + shift + ,
 'key' = ',': capslock + ,
 ```
+
+## 文件清单
+
+以下功能需要在 init.lua 中启用：
+
+1. `hotkey.lua` 常用 App 及其绑定的绑定快捷键
+1. `ime.lua` 切换到中文输入法（废弃未使用）
+1. `winSwitch.lua` 类似 cmd+tab 的窗口切换（废弃未使用）
+1. `work.lua` 根据位置切换 wifi（废弃未使用）
 
 ## Karabiner-Elements 里设置 hyper 键的 json
 
