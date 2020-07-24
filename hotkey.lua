@@ -91,11 +91,19 @@ local launchOrFocusWindowByPath = function(path)
       end
     else -- 当前 APP 不是要打开的 APP 时直接切到 APP 不用切换 APP 的窗口
       hs.application.launchOrFocus(path)
-    end
-    -- Finder 比较特殊，可能 focus 不了，需要再来一下
-    local appBundleID = hs.application.infoForBundlePath(path)['CFBundleIdentifier']
-    if 'com.apple.finder' == appBundleID then
-      hs.application.get(appBundleID):activate() -- 参数不能是 Finder 得是 访达，不过支持传 bundleID
+      -- Finder 比较特殊，可能 focus 不了，需要再来一下，原因不详
+      local appBundleID = hs.application.infoForBundlePath(path)['CFBundleIdentifier']
+      if 'com.apple.finder' == appBundleID then
+        local app = hs.application.get(appBundleID) -- 参数不能是 Finder 得是 访达，不过支持传 bundleID
+        local wins = hs.fnutils.filter(app:allWindows(), function(item)
+          return item:role() == "AXWindow"
+        end)
+        if #wins == 1 then -- 有时 Finder active 不了，得全部 active 才有效果
+          app:activate(true)
+        else -- 当窗口多时不想全 active ，也不知道在多个 window 时下边这行能不能解决不能 active 的问题
+          app:activate()
+        end
+      end
     end
   end
 end
