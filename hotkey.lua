@@ -310,6 +310,13 @@ hs.fnutils.each(
   end
 )
 
+-- 打开项目所在文件夹
+hs.hotkey.bind({'cmd'}, 'e',
+  function()
+    hs.execute('open ~/Projects')
+  end
+)
+
 -- 显示帮助
 hs.hotkey.bind(
   hyper,
