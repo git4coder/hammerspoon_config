@@ -37,16 +37,17 @@
 
 ## Karabiner-Elements 里设置 hyper 键的 json
 
-> 这个 json 的用途是 按下 capslock + {其它键} 时相当于按下 command + option + control + {其它键}
-> 当没有按下 {其它键} 时还是本身的 capslock 的功能
-> ~/.config/karabiner/assets/complex_modifications/capslock2hyper.json
+* 按下 capslock + {其它键} 时相当于按下 command + option + control + {其它键}
+* 当没有按下 {其它键} 时还是本身的 capslock 的功能
 
-```json
+```jsonnet
+// ~/.config/karabiner/assets/complex_modifications/capslock2hyper.json
+
 {
   "title": "capslock2hyper",
   "rules": [
     {
-      "description": "Hyper(cmd+opt+ctrl)",
+      "description": "Hyper(⌃⌥⌘)",
       "manipulators": [
         {
           "from": {
