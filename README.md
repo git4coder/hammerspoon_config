@@ -6,10 +6,15 @@
 
 ## 用法
 
-1. `caps + 字符` 打开指定的 App
-1. `caps + ?` 显示已绑定快捷键的 App
+1. `caps + 字符` - 打开或切换到指定的 App （caps 代指 CapsLock 这个大小写切换键）
+1. `caps + ?` - 显示已绑定快捷键的 App
 
-连按同一个快捷键可以在已打开的 App 的各窗口间循环切换
+Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，比如连续按 caps+g 可以在 Google Chrome 的各窗口间切换。
+
+## 依赖
+
+1. [Hammerspoon.app](https://www.hammerspoon.org/)
+1. [Karabiner-Elements.app](https://karabiner-elements.pqrs.org/) - 把 CapsLock 变成 ^+⌥+⌘（仅与其它键组合按时才变）
 
 ## 配置
 
