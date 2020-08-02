@@ -18,7 +18,7 @@ local apps = {
   {key = 'e', path = '/System/Library/CoreServices/Finder.app'},
   {key = 'f', path = '/Applications/Fork.app'},
   {key = 'g', path = '/Applications/Google Chrome.app'},
-  {key = 'j', path = '/Applications/PhpStorm 2020.2 EAP.app'}, 
+  {key = 'j', path = '/Applications/PhpStorm.app'}, 
   {key = 't', path = '/System/Applications/Utilities/Terminal.app'},
   {key = 'o', path = '/Applications/wpsoffice.app'},
   {key = 'm', path = '/Applications/Motrix.app'},
