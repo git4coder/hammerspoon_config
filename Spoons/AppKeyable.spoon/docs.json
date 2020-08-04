@@ -1,0 +1,181 @@
+[
+  {
+    "Constant" : [
+
+    ],
+    "submodules" : [
+
+    ],
+    "Function" : [
+
+    ],
+    "Variable" : [
+      {
+        "name" : "hyper",
+        "stripped_doc" : [
+          "hyper key",
+          "",
+          "Do not use the shift key. The shift key will be added automatically when the upper case letter is specified.",
+          "",
+          "Expmple:",
+          " `{'ctrl', 'alt', 'cmd'}`"
+        ],
+        "doc" : "hyper key\n\nDo not use the shift key. The shift key will be added automatically when the upper case letter is specified.\n\nExpmple:\n `{'ctrl', 'alt', 'cmd'}`",
+        "parameters" : [
+
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "AppKeyable.hyper",
+        "type" : "Variable",
+        "returns" : [
+
+        ],
+        "def" : "AppKeyable.hyper",
+        "desc" : "hyper key"
+      },
+      {
+        "name" : "applications",
+        "stripped_doc" : [
+          "applications table",
+          "",
+          "Expmple:",
+          " `{{key = 'a', path = '\/Applications\/Affinity Photo.app'},{key = 'A', path = '\/Applications\/Blender.app'}}`"
+        ],
+        "doc" : "applications table\n\nExpmple:\n `{{key = 'a', path = '\/Applications\/Affinity Photo.app'},{key = 'A', path = '\/Applications\/Blender.app'}}`",
+        "parameters" : [
+
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "AppKeyable.applications",
+        "type" : "Variable",
+        "returns" : [
+
+        ],
+        "def" : "AppKeyable.applications",
+        "desc" : "applications table"
+      },
+      {
+        "name" : "functions",
+        "stripped_doc" : [
+          "functions table",
+          "",
+          "Expmple:",
+          " `{{key = 'c', name = 'Show Hello', fun = function() hs.alert('hello') end},{key = 'C', name = 'Show World', fun = function() hs.alert('world') end}}"
+        ],
+        "doc" : "functions table\n\nExpmple:\n `{{key = 'c', name = 'Show Hello', fun = function() hs.alert('hello') end},{key = 'C', name = 'Show World', fun = function() hs.alert('world') end}}",
+        "parameters" : [
+
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "AppKeyable.functions",
+        "type" : "Variable",
+        "returns" : [
+
+        ],
+        "def" : "AppKeyable.functions",
+        "desc" : "functions table"
+      }
+    ],
+    "stripped_doc" : [
+
+    ],
+    "desc" : "You can use the shortcut key to switch to the specified app, or switch between the windows of the current app.",
+    "Deprecated" : [
+
+    ],
+    "type" : "Module",
+    "Constructor" : [
+
+    ],
+    "Field" : [
+
+    ],
+    "Method" : [
+
+    ],
+    "Command" : [
+
+    ],
+    "doc" : "You can use the shortcut key to switch to the specified app, or switch between the windows of the current app.",
+    "items" : [
+      {
+        "name" : "applications",
+        "stripped_doc" : [
+          "applications table",
+          "",
+          "Expmple:",
+          " `{{key = 'a', path = '\/Applications\/Affinity Photo.app'},{key = 'A', path = '\/Applications\/Blender.app'}}`"
+        ],
+        "doc" : "applications table\n\nExpmple:\n `{{key = 'a', path = '\/Applications\/Affinity Photo.app'},{key = 'A', path = '\/Applications\/Blender.app'}}`",
+        "parameters" : [
+
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "AppKeyable.applications",
+        "type" : "Variable",
+        "returns" : [
+
+        ],
+        "def" : "AppKeyable.applications",
+        "desc" : "applications table"
+      },
+      {
+        "name" : "functions",
+        "stripped_doc" : [
+          "functions table",
+          "",
+          "Expmple:",
+          " `{{key = 'c', name = 'Show Hello', fun = function() hs.alert('hello') end},{key = 'C', name = 'Show World', fun = function() hs.alert('world') end}}"
+        ],
+        "doc" : "functions table\n\nExpmple:\n `{{key = 'c', name = 'Show Hello', fun = function() hs.alert('hello') end},{key = 'C', name = 'Show World', fun = function() hs.alert('world') end}}",
+        "parameters" : [
+
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "AppKeyable.functions",
+        "type" : "Variable",
+        "returns" : [
+
+        ],
+        "def" : "AppKeyable.functions",
+        "desc" : "functions table"
+      },
+      {
+        "name" : "hyper",
+        "stripped_doc" : [
+          "hyper key",
+          "",
+          "Do not use the shift key. The shift key will be added automatically when the upper case letter is specified.",
+          "",
+          "Expmple:",
+          " `{'ctrl', 'alt', 'cmd'}`"
+        ],
+        "doc" : "hyper key\n\nDo not use the shift key. The shift key will be added automatically when the upper case letter is specified.\n\nExpmple:\n `{'ctrl', 'alt', 'cmd'}`",
+        "parameters" : [
+
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "AppKeyable.hyper",
+        "type" : "Variable",
+        "returns" : [
+
+        ],
+        "def" : "AppKeyable.hyper",
+        "desc" : "hyper key"
+      }
+    ],
+    "name" : "AppKeyable"
+  }
+]

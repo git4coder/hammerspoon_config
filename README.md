@@ -18,32 +18,43 @@ Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，�
 
 ## 配置
 
-编辑 hotkey.lua，在 `apps` 中修改 app 及其快捷键；
+编辑 `./Spoons/AppKeyable.spoon/config.lua`，在 `applications` 中修改 app 及其快捷键；
 
-**注意 key 是区分大小写的**，当设置为大写时快捷按需要增加一个 shift，例：
+或在 `./init.lua` 末尾添加以下内容：
+
+```lua
+spoon.AppKeyable.applications = {
+  {key = 'a', path = '/Applications/Affinity Photo.app'},
+  {key = 'b', path = '/Applications/Bear.app'},
+  {key = 'B', path = '/Applications/Blender.app'},
+  -- more applications ...
+}
+spoon.AppKeyable.functions = nil -- 关掉自带的 functions
+```
+
+**注意 key 是区分大小写的**，当设置为大写时快捷按需要增加一个 `shift`，例：
 
 ```
-'key' = 'A': capslock + shift + a
-'key' = 'a': capslock + a
-'key' = '@': capslock + shift + 2
-'key' = '2': capslock + 2
-'key' = '<': capslock + shift + ,
-'key' = ',': capslock + ,
+'key' = 'A' --> CapsLock + Shift + a
+'key' = 'a' --> CapsLock + a
+'key' = '@' --> CapsLock + Shift + 2
+'key' = '2' --> CapsLock + 2
+'key' = '<' --> CapsLock + Shift + ,
+'key' = ',' --> CapsLock + ,
 ```
 
 ## 文件清单
 
-以下功能需要在 init.lua 中启用：
+以下功能需要在 `init.lua` 中启用：
 
-1. `hotkey.lua` 常用 App 及其绑定的绑定快捷键
-1. `ime.lua` 切换到中文输入法（废弃未使用）
-1. `winSwitch.lua` 类似 cmd+tab 的窗口切换（废弃未使用）
-1. `work.lua` 根据位置切换 wifi（废弃未使用）
+1. `Spoons/AppKeyable.spoon` 常用 App 及其绑定的绑定快捷键
+1. `Spoons/ReloadConfiguration.spoon` 自动加载新配置
+1. `Spoons/SpeedMenu.spoon` 状态栏显示网速
 
 ## Karabiner-Elements 里设置 hyper 键的 json
 
-* 按下 capslock + {其它键} 时相当于按下 command + option + control + {其它键}
-* 当没有按下 {其它键} 时还是本身的 capslock 的功能
+* 按下 `capslock + {其它键}` 时相当于按下 `command + option + control + {其它键}`
+* 当没有按下 `{其它键}` 时还是本身的 `capslock` 的功能
 
 ```jsonnet
 // ~/.config/karabiner/assets/complex_modifications/capslock2hyper.json
@@ -77,4 +88,22 @@ Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，�
     }
   ]
 }
+```
+
+## Other
+
+多次点击 Dock 里的微信开发者工具后，会多出一个僵死的，以下可以找到它，但是杀不死……
+```lua
+for i,v in ipairs(hs.application.runningApplications()) do
+  local title = v:title()
+  if title == 'wechatwebdevtools' then
+    local wins = v:allWindows()
+    print(i, title, #wins)
+    for a,b in ipairs(wins) do
+      print(a, b:role(), b:title())
+    end
+    v:kill()
+    v:kill9()
+  end
+end
 ```
