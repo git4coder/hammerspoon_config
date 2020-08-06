@@ -37,10 +37,8 @@ _config.applications = nil
 ---  `{{key = 'c', name = 'Show Hello', fun = function() hs.alert('hello') end},{key = 'C', name = 'Show World', fun = function() hs.alert('world') end}}
 _config.functions = nil
 
-obj.spoonPath = hs.spoons.scriptPath()
-
 -- obj.config = {applications = nil}
-obj.config = dofile(obj.spoonPath .. 'config.lua') or {}
+obj.config = dofile(hs.spoons.scriptPath() .. 'config.lua') or {}
 obj.__index = obj
 
 -- 帮助信息的样式
@@ -168,34 +166,9 @@ local fillColor = function(string, color, alpha)
   )
 end
 
-local tableFilter = function(t, fn)
-  local n = {}
-  for k, v in pairs(t) do
-    local item = fn(v, k, t)
-    if item then
-      table.insert(n, v)
-    end
-  end
-  return n
-end
-
-local tableMap = function(t, fn)
-  local n = {}
-  for k, v in pairs(t) do
-    local item = fn(v, k, t)
-    table.insert(n, item)
-  end
-  return n
-end
-
 -- 为 applications 和 functions 绑定快捷键的方法
 local bindHotkey = function(app)
-  local hyper = tableMap(
-    obj.config.hyper,
-    function(v)
-      return v
-    end
-  ) -- clone
+  local hyper = hs.fnutils.copy(obj.config.hyper) -- clone
   -- 找到需要按shift才能打出的符号字母所在的键
   local getOriginKey = function(key)
     local origin = key
@@ -244,21 +217,22 @@ end
 function obj:init()
   for i, v in pairs(_config) do -- ipairs 在遇到第一个 nil 就终止了，nil 会自动跳过
     -- print('merge config:', i, v)
-    obj.config[i] = v
+    self.config[i] = v
   end
   _config = nil
+  return self
 end
 
 function obj:start()
-  local hyper = tableFilter(
+  local hyper = hs.fnutils.filter(
     self.config.hyper,
     function(v)
-      return v ~= 'shift'
+      return string.lower(v) ~= 'shift'
     end
   ) -- 排除 shift
   -- 为常用工具绑定快捷键
   hs.fnutils.each(
-    obj.config.applications,
+    self.config.applications,
     function(app)
       bindHotkey(app)
     end
@@ -266,7 +240,7 @@ function obj:start()
 
   -- 为功能绑定快捷键
   hs.fnutils.each(
-    obj.config.functions,
+    self.config.functions,
     function(fun)
       bindHotkey(fun)
     end
@@ -283,10 +257,10 @@ function obj:start()
 
       -- 合并 applications 和 functions
       local actions = {}
-      for _, v in ipairs(obj.config.applications) do
+      for _, v in ipairs(self.config.applications) do
         table.insert(actions, v)
       end
-      for _, v in ipairs(obj.config.functions) do
+      for _, v in ipairs(self.config.functions) do
         table.insert(actions, v)
       end
 
