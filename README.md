@@ -14,7 +14,7 @@ Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，�
 ## 依赖
 
 1. [Hammerspoon.app](https://www.hammerspoon.org/)
-1. [Karabiner-Elements.app](https://karabiner-elements.pqrs.org/) - 把 CapsLock 变成 ^+⌥+⌘（仅与其它键组合按时才变）
+1. [Karabiner-Elements.app](https://karabiner-elements.pqrs.org/) - 把 CapsLock 变成 `^ + ⌥ + ⌘`（仅与其它键组合按时才变）
 
 ## 配置
 
@@ -23,6 +23,8 @@ Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，�
 或在 `./init.lua` 末尾添加以下内容：
 
 ```lua
+hs.loadSpoon("AppKeyable")
+spoon.AppKeyable.hyper = {'ctrl', 'alt', 'cmd'}
 spoon.AppKeyable.applications = {
   {key = 'a', path = '/Applications/Affinity Photo.app'},
   {key = 'b', path = '/Applications/Bear.app'},
@@ -30,6 +32,7 @@ spoon.AppKeyable.applications = {
   -- more applications ...
 }
 spoon.AppKeyable.functions = nil -- 关掉自带的 functions
+spoon.AppKeyable:start()
 ```
 
 **注意 key 是区分大小写的**，当设置为大写时快捷按需要增加一个 `shift`，例：
@@ -47,14 +50,14 @@ spoon.AppKeyable.functions = nil -- 关掉自带的 functions
 
 以下功能需要在 `init.lua` 中启用：
 
-1. `Spoons/AppKeyable.spoon` 常用 App 及其绑定的绑定快捷键
+1. `Spoons/AppKeyable.spoon` 为常用 App 绑定快捷键
 1. `Spoons/ReloadConfiguration.spoon` 自动加载新配置
 1. `Spoons/SpeedMenu.spoon` 状态栏显示网速
 
 ## Karabiner-Elements 里设置 hyper 键的 json
 
-* 按下 `capslock + {其它键}` 时相当于按下 `command + option + control + {其它键}`
-* 当没有按下 `{其它键}` 时还是本身的 `capslock` 的功能
+* 按下 `CapsLock + {其它键}` 时相当于按下 `command + option + control + {其它键}`
+* 当没有按下 `{其它键}` 时还是本身的 `CapsLock` 的功能
 
 ```jsonnet
 // ~/.config/karabiner/assets/complex_modifications/capslock2hyper.json
