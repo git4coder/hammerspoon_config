@@ -103,6 +103,11 @@ module.functions = {
       print(script)
       hs.osascript.applescript(script)
     end
+  },
+  {
+    name = 'F5',
+    key = 'r'
+    -- 需要在 Karabiner-Elements 里将 Control + Option + Command + r 映射到 F5 上，这里仅作提示
   }
 }
 
