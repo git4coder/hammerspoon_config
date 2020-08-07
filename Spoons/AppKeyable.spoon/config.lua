@@ -14,12 +14,14 @@ module.todoFile = '~/Documents/todo.txt' -- 这是默认值，所以此行可删
 
 module.applications = {
   {key = 'a', path = '/Applications/Affinity Photo.app'},
+  {key = 'A', path = '/System/Applications/App Store.app'},
   {key = 'b', path = '/Applications/Bear.app'},
   {key = 'B', path = '/Applications/Blender.app'},
   {key = 'd', path = '/Applications/DBeaver.app'},
   {key = 'D', path = '/Applications/DingTalk.app'},
   {key = 'e', path = '/System/Library/CoreServices/Finder.app'},
   {key = 'f', path = '/Applications/Fork.app'},
+  {key = 'F', path = '/Applications/Seafile Client.app'},
   {key = 'g', path = '/Applications/Google Chrome.app'},
   {key = 'j', path = '/Applications/PhpStorm.app'}, 
   {key = 't', path = '/System/Applications/Utilities/Terminal.app'},
@@ -48,17 +50,24 @@ module.functions = {
       local bundleID = hs.application.frontmostApplication():bundleID()
       local path = hs.application.frontmostApplication():path()
       local im = hs.keycodes.currentSourceID()
-      local content = ''
-      content = content .. '    Name ' .. title .. '\n'
-      content = content .. 'BundleID ' .. bundleID .. '\n'
-      content = content .. '    Path ' .. path .. '\n'
-      content = content .. '      IM ' .. im
+      local fillColor = function(string, color, alpha)
+        return hs.styledtext.new(string ,{
+          color = hs.drawing.color.asRGB({hex = color, alpha = 1}),
+          font = {name = 'Monaco', size = 14}
+        })
+      end
+      local content = fillColor('', '#666666')
+      content = content .. fillColor('    Name ', '#666666') .. fillColor(title, '#FFFFFF') .. '\n'
+      content = content .. fillColor('BundleID ', '#666666') .. fillColor(bundleID, '#FFFFFF') .. '\n'
+      content = content .. fillColor('    Path ', '#666666') .. fillColor(path, '#FFFFFF') .. '\n'
+      content = content .. fillColor('      IM ', '#666666') .. fillColor(im, '#FFFFFF')
       hs.alert.closeAll()
       hs.alert.show(
         content,
         alertStyle
       )
-      hs.pasteboard.setContents(string.format('%s\n%s\n%s\n%s\n', title, bundleID, path, im)); -- 复制到剪贴板
+      -- hs.pasteboard.setContents(string.format('%s\n%s\n%s\n%s\n', title, bundleID, path, im)); -- 复制到剪贴板
+      hs.pasteboard.setContents(path); -- 复制到剪贴板
       print('BundleID:', bundleID);
       print('    Path:', path);
     end
@@ -70,7 +79,7 @@ module.functions = {
     fun = function()
       hs.alert.closeAll();
       hs.focus()
-      local file = nil ~= mobule.todoFile and mobule.todoFile or '~/Documents/todo.txt'
+      local file = nil ~= module.todoFile and module.todoFile or '~/Documents/todo.txt'
       local confirm, content = hs.dialog.textPrompt('请输入需要记录的内容', 'File: ' .. file, '', '保存', '取消')
       print(confirm, content);
       if ('保存' == confirm and '' ~= content) then
@@ -96,7 +105,7 @@ module.functions = {
     fun = function()
       hs.alert.closeAll();
       hs.focus()
-      local file = nil ~= mobule.todoFile and mobule.todoFile or '~/Documents/todo.txt'
+      local file = nil ~= module.todoFile and module.todoFile or '~/Documents/todo.txt'
       local script = string.format([[
         do shell script "qlmanage -p %s"
       ]], file)

@@ -18,13 +18,17 @@ Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，�
 
 ## 安装
 
-方法一(推荐第一次使用的用户)：
+**方法一**
+
+推荐第一次使用的用户
 
 ```
 git clone https://github.com/git4coder/hammerspoon_config.git ~/.hammersoppn
 ```
 
-方法二(Hammerspoon 用户可使用这个方法追加到已有配置中)：
+**方法二**
+
+Hammerspoon 用户可使用这个方法追加到已有配置中
 
 下载 [Spoon/Appkeyable.spoon](https://github.com/git4coder/hammerspoon_config/releases) 后双击打开即可自动导入
 

@@ -17,7 +17,7 @@ hs.loadSpoon("ReloadConfiguration") -- 自动重载 Hammerspoon 配置
 
 spoon.ReloadConfiguration:start()
 spoon.AppKeyable:start()
--- spoon.SpeedMenu:start() -- 貌似不需要 start
+-- spoon.SpeedMenu:start() -- 不需要 start，loadSpoon() 时已经自动启动了
 
 -- 打开项目所在文件夹
 hs.hotkey.bind({'cmd'}, 'e',

@@ -52,13 +52,13 @@ local alertStyle = {
   fillColor = hs.drawing.color.asRGB(
     {
       hex = '#000000',
-      alpha = 0.75
+      alpha = 0.90
     }
   ), -- 背景色
   strokeColor = hs.drawing.color.asRGB(
     {
       hex = '#FFFFFF',
-      alpha = 0.35
+      alpha = 0.45
     }
   ), -- 边框色
   radius = 5, -- 边框圆角半径
@@ -66,13 +66,56 @@ local alertStyle = {
   textSize = 12, -- 字号
   atScreenEdge = 0, -- 显示位置：0: screen center (default); 1: top edge; 2: bottom edge
   fadeInDuration = 0, -- 渐现耗时
-  fadeOutDuration = 0.15 -- 渐隐耗时
+  fadeOutDuration = 2.5 -- 渐隐耗时
 }
+
+-- 彩色化文本
+local fillColor = function(string, color, alpha)
+  if nil == string then
+    string = ''
+  end
+  if nil == color then
+    color = '#FFFFFF'
+  end
+  if nil == alpha then
+    alpha = 1
+  end
+  return hs.styledtext.new(
+    string,
+    {
+      color = hs.drawing.color.asRGB(
+        {
+          hex = color,
+          alpha = alpha
+        }
+      ),
+      font = {
+        name = 'Monaco',
+        size = 14
+      }
+    }
+  )
+end
 
 --  打开/切换到App(可以在当前 APP 的窗口间切换)
 local launchOrFocusWindowByPath = function(path)
   return function()
+    -- 切换时添加提醒信息（hs.hotkey.bind 的 message 去不掉按键提示）
     hs.alert.closeAll()
+    local message = string.match(path, '/([%w%d%s.]+).app$')
+    local key = 'SwitchTo'
+    local alertStyle = hs.fnutils.copy(alertStyle)
+    alertStyle['fadeInDuration'] = 0.1 -- 渐现耗时
+    alertStyle['fadeOutDuration'] = 0.1 -- 渐隐耗时
+    for i, v in pairs(obj.config.applications) do
+      if v.path == path then
+        key = 'caps-' .. v.key
+        break
+      end
+    end
+    message = fillColor(key .. ': ', '#666666') .. fillColor(message, '#FFFFFF')
+    hs.alert.show(message, alertStyle, hs.screen.mainScreen(), 1.5)
+
     local curApp = hs.application.frontmostApplication()
     -- print(string.match(path, '/([%w%d%s.]+).app$') .. ' <-- ' .. string.match(curApp:path(), '/([%w%d%s.]+).app$'))
     if curApp:path() == path then -- 当前 APP 就是要打开的 APP 时找到当前 APP 的下一个窗口
@@ -136,34 +179,6 @@ local launchOrFocusWindowByPath = function(path)
       end
     end
   end
-end
-
--- 彩色化文本
-local fillColor = function(string, color, alpha)
-  if nil == string then
-    string = ''
-  end
-  if nil == color then
-    color = '#FFFFFF'
-  end
-  if nil == alpha then
-    alpha = 1
-  end
-  return hs.styledtext.new(
-    string,
-    {
-      color = hs.drawing.color.asRGB(
-        {
-          hex = color,
-          alpha = alpha
-        }
-      ),
-      font = {
-        name = 'Monaco',
-        size = 14
-      }
-    }
-  )
 end
 
 -- 为 applications 和 functions 绑定快捷键的方法
@@ -342,7 +357,8 @@ function obj:start()
         end
       end
 
-      hs.alert.show(info, alertStyle)
+      local displaySeconds = 5 -- 展示时长
+      hs.alert.show(info, alertStyle, hs.screen.mainScreen(), displaySeconds)
     end
   )
 end
