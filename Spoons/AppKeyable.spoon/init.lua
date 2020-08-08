@@ -66,7 +66,7 @@ local alertStyle = {
   textSize = 12, -- 字号
   atScreenEdge = 0, -- 显示位置：0: screen center (default); 1: top edge; 2: bottom edge
   fadeInDuration = 0, -- 渐现耗时
-  fadeOutDuration = 2.5 -- 渐隐耗时
+  fadeOutDuration = 0.5 -- 渐隐耗时
 }
 
 -- 彩色化文本
@@ -105,8 +105,8 @@ local launchOrFocusWindowByPath = function(path)
     local message = string.match(path, '/([%w%d%s.]+).app$')
     local key = 'SwitchTo'
     local alertStyle = hs.fnutils.copy(alertStyle)
-    alertStyle['fadeInDuration'] = 0.1 -- 渐现耗时
-    alertStyle['fadeOutDuration'] = 0.1 -- 渐隐耗时
+    alertStyle['fadeInDuration'] = 0.2 -- 渐现耗时
+    alertStyle['fadeOutDuration'] = 0.5 -- 渐隐耗时
     for i, v in pairs(obj.config.applications) do
       if v.path == path then
         key = 'caps-' .. v.key
@@ -114,7 +114,7 @@ local launchOrFocusWindowByPath = function(path)
       end
     end
     message = fillColor(key .. ': ', '#666666') .. fillColor(message, '#FFFFFF')
-    hs.alert.show(message, alertStyle, hs.screen.mainScreen(), 1.5)
+    hs.alert.show(message, alertStyle, hs.screen.mainScreen(), 0.5)
 
     local curApp = hs.application.frontmostApplication()
     -- print(string.match(path, '/([%w%d%s.]+).app$') .. ' <-- ' .. string.match(curApp:path(), '/([%w%d%s.]+).app$'))
@@ -136,6 +136,11 @@ local launchOrFocusWindowByPath = function(path)
         ]]
       -- 只有一个窗口时直接返回
       if #wins == 1 then
+        for _,v in ipairs(wins) do
+          if true ==  v:isMinimized() then
+            v:unminimize()
+          end
+        end
         return
       end
       -- 没有窗口（当前窗口全部关闭后程序并不退出）
@@ -154,10 +159,14 @@ local launchOrFocusWindowByPath = function(path)
       -- 把第一个窗口追加到末尾，用于当前窗口是最后一个窗口时可以快速找到下一个窗口
       for k, v in ipairs(wins) do
         if v:id() == curWin:id() then
+          if true ==  wins[k + 1]:isMinimized() then
+            wins[k + 1]:unminimize()
+          end
           wins[k + 1]:focus()
           return
         end
       end
+      wins = nil
     else -- 当前 APP 不是要打开的 APP 时直接切到 APP 不用切换 APP 的窗口
       hs.application.launchOrFocus(path)
       -- Finder 比较特殊，可能 focus 不了，需要再来一下，原因不详
@@ -176,8 +185,11 @@ local launchOrFocusWindowByPath = function(path)
         else -- 当窗口多时不想全 active ，也不知道在多个 window 时下边这行能不能解决不能 active 的问题
           app:activate()
         end
+        wins = nil
       end
     end
+    curApp = nil
+    alertStyle = nil
   end
 end
 
@@ -362,7 +374,7 @@ function obj:start()
         end
       end
 
-      local displaySeconds = 5 -- 展示时长
+      local displaySeconds = 1 -- 展示时长
       hs.alert.show(info, alertStyle, hs.screen.mainScreen(), displaySeconds)
     end
   )
