@@ -183,6 +183,9 @@ end
 
 -- 为 applications 和 functions 绑定快捷键的方法
 local bindHotkey = function(app)
+  -- in case called as function
+  if self ~= obj then self = obj end
+
   local hyper = hs.fnutils.copy(obj.config.hyper) -- clone
   -- 找到需要按shift才能打出的符号字母所在的键
   local getOriginKey = function(key)
@@ -225,7 +228,8 @@ local bindHotkey = function(app)
   end
 
   if nil ~= app.fun or nil ~= app.path then
-    hs.hotkey.bind(hyper, key, message, app.fun or launchOrFocusWindowByPath(app.path))
+    local bound = hs.hotkey.bind(hyper, key, message, app.fun or launchOrFocusWindowByPath(app.path))
+    table.insert(self.boundHotkey, bound)
   end
 end
 
@@ -235,6 +239,7 @@ function obj:init()
     self.config[i] = v
   end
   _config = nil
+  self.boundHotkey = {} -- 已经绑好的快捷键，用于 release hotkey
   return self
 end
 
@@ -262,7 +267,7 @@ function obj:start()
   )
 
   -- 显示帮助
-  hs.hotkey.bind(
+  local bound = hs.hotkey.bind(
     hyper,
     '/',
     function()
@@ -361,9 +366,13 @@ function obj:start()
       hs.alert.show(info, alertStyle, hs.screen.mainScreen(), displaySeconds)
     end
   )
+  table.insert(self.boundHotkey, bound)
 end
 
 function obj:stop()
+  for _, v in pairs(self.boundHotkey) do
+    v:delete()
+  end
 end
 
 return obj
