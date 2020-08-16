@@ -20,6 +20,7 @@ module.applications = {
   {key = 'd', path = '/Applications/DBeaver.app'},
   {key = 'D', path = '/Applications/NeteaseDictionary.app'},
   {key = 'e', path = '/System/Library/CoreServices/Finder.app'},
+  {key = 'E', path = '/System/Applications/TextEdit.app'},
   {key = 'f', path = '/Applications/Fork.app'},
   {key = 'F', path = '/Applications/Seafile Client.app'},
   {key = 'g', path = '/Applications/Google Chrome.app'},
