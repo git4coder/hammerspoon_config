@@ -356,7 +356,11 @@ function obj:start()
           local val = nil ~= v.name and v.name or string.match(v.path, '/([^/]-).app$')
           local item = fillColor(key .. ' ', '#666666') .. fillColor(val, '#FFFFFF')
           local itemLen = #(capsLockSymbol .. '-? ') + #val --  不使用 #item 是因为“←”等的长度不是1，可能是2、3（取决于字符的 utf8 长度），会导致对不齐
-
+          -- paddingLeft
+          local colPrefix = fillColor(' ', '#666666')
+          item = colPrefix .. item
+          itemLen = #colPrefix + itemLen
+          -- 每项宽度一样才能对齐列
           if (itemLen < colWidth) then
             item = item .. string.rep(' ', colWidth - itemLen)
           end
