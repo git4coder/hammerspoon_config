@@ -2,6 +2,13 @@ print("#######################")
 print(">> Hammerspoon Init ...")
 hs.window.animationDuration = 0 -- 禁用动画，默认 0.2 https://github.com/Hammerspoon/hammerspoon/issues/1936
 
+hs.console.darkMode(true)
+if hs.console.darkMode() then
+    hs.console.outputBackgroundColor({ white = 0, alpha = 0.5 })
+    hs.console.consoleCommandColor({ white = 1, alpha = 0.7 })
+    hs.console.alpha(1.00)
+end
+
 -- 全局 hs.alert 样式
 hs.alert.defaultStyle.textColor    = hs.drawing.color.asRGB({hex = '#FFFFFF', alpha = 1.00}) -- 文本色
 hs.alert.defaultStyle.fillColor    = hs.drawing.color.asRGB({hex = '#000000', alpha = 0.75}) -- 背景色
