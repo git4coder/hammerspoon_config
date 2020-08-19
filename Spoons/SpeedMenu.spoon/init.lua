@@ -69,8 +69,9 @@ end
 ---
 
 function obj:rescan()
+    let , darkmode = hs.osascript.applescript('tell application "System Events"\nreturn dark mode of appearance preferences\nend tell')
     obj.interface = hs.network.primaryInterfaces()
-    obj.darkmode = hs.osascript.applescript('tell application "System Events"\nreturn dark mode of appearance preferences\nend tell')
+    obj.darkmode =  darkmode
     local menuitems_table = {}
     if obj.interface then
         -- Inspect active interface and create menuitems
