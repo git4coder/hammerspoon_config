@@ -354,7 +354,8 @@ function obj:start()
           end
           local key = capsLockSymbol .. '-' .. keyName2KeySymbol(v.key)
           local val = nil ~= v.name and v.name or string.match(v.path, '/([^/]-).app$')
-          local item = fillColor(key .. ' ', '#666666') .. fillColor(val, '#FFFFFF')
+          local color = v.color or '#FFFFFF'
+          local item = fillColor(key .. ' ', '#666666') .. fillColor(val, color)
           local itemLen = #(capsLockSymbol .. '-? ') + #val --  不使用 #item 是因为“←”等的长度不是1，可能是2、3（取决于字符的 utf8 长度），会导致对不齐
           -- paddingLeft
           local colPrefix = fillColor(' ', '#666666')
