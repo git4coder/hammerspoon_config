@@ -13,10 +13,9 @@ module.hyper = {'control', 'option', 'command'} -- 不要加 shift，shift 在�
 module.todoFile = '~/Documents/todo.txt' -- 这是默认值，所以此行可删除
 
 module.applications = {
-  {key = 'a', color = '#FFFFFF', path = '/Applications/Affinity Photo.app'},
+  {key = 'a', color = '#FFFFFF', path = '/Applications/Android Studio.app'},
   {key = 'A', color = '#FFFFFF', path = '/System/Applications/App Store.app'},
-  {key = 'b', color = '#FFFFFF', path = '/Applications/Bear.app'},
-  {key = 'B', color = '#FFFFFF', path = '/Applications/Blender.app'},
+  {key = 'b', color = '#FFFFFF', path = '/Applications/Blender.app'},
   {key = 'd', color = '#FFFFFF', path = '/Applications/DBeaver.app'},
   {key = 'D', color = '#FFFFFF', path = '/Applications/NeteaseDictionary.app'},
   {key = 'e', color = '#FFFFFF', path = '/System/Library/CoreServices/Finder.app'},
@@ -32,10 +31,10 @@ module.applications = {
   {key = 'M', color = '#FFFFFF', path = '/System/Applications/Utilities/Activity Monitor.app'},
   {key = 'p', color = '#FFFFFF', path = '/Applications/Postman.app'},
   {key = 'q', color = '#FFFFFF', path = '/Applications/QQ.app'},
-  {key = 's', color = '#FFFFFF', path = '/Applications/Safari.app'},
+  {key = 's', color = '#FFFFFF', path = '/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app'},
   {key = 'S', color = '#FFFFFF', path = '/System/Applications/System Preferences.app'},
   {key = 'v', color = '#FFFFFF', path = '/Applications/Visual Studio Code.app'},
-  {key = 'V', color = '#FFFFFF', path = '/Applications/VirtualBox.app'},
+  {key = 'V', color = '#FFFFFF', path = '/Applications/VirtualBox.app/Contents/Resources/VirtualBoxVM.app'},
   {key = 'W', color = '#FFFFFF', path = '/Applications/WeChat.app'},
   {key = 'w', color = '#FFFFFF', path = '/Applications/wechatwebdevtools.app'},
   {key = 'x', color = '#FFFFFF', path = '/Applications/Xcode.app'},

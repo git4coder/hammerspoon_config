@@ -97,12 +97,19 @@ local fillColor = function(string, color, alpha)
   )
 end
 
+-- 从 path 中取 app 的名字
+local getAppName = function(path)
+  local name = 'NO_NAME';
+  print(path)
+  return string.match(path, '/([^/]-)%.app$') or name
+end
+
 --  打开/切换到App(可以在当前 APP 的窗口间切换)
 local launchOrFocusWindowByPath = function(path)
   return function()
     -- 切换时添加提醒信息（hs.hotkey.bind 的 message 去不掉按键提示）
     hs.alert.closeAll()
-    local message = string.match(path, '/([^/]-).app$')
+    local message = getAppName(path)
     local key = 'SwitchTo'
     local alertStyle = hs.fnutils.copy(alertStyle)
     alertStyle['fadeInDuration'] = 0.2 -- 渐现耗时
@@ -117,7 +124,7 @@ local launchOrFocusWindowByPath = function(path)
     hs.alert.show(message, alertStyle, hs.screen.mainScreen(), 0.5)
 
     local curApp = hs.application.frontmostApplication()
-    -- print(string.match(path, '/([^/]-).app$') .. ' <-- ' .. string.match(curApp:path(), '/([^/]-).app$'))
+    -- print(getAppName(path)) .. ' <-- ' .. getAppName(curApp:path())
     if curApp:path() == path then -- 当前 APP 就是要打开的 APP 时找到当前 APP 的下一个窗口
       -- 获取 APP 的所有窗口（不含 toast、scrollarea 等窗体）
       local wins =
@@ -129,7 +136,7 @@ local launchOrFocusWindowByPath = function(path)
       )
       --[[
         -- 调试用
-        print('#wins: ' .. #wins .. ' <-- ' .. string.match(path, '/([^/]-).app$'))
+        print('#wins: ' .. #wins .. ' <-- ' .. getAppName(path))
         for i,v in ipairs(curApp:allWindows()) do
           print(i, v:role(), v:title())
         end
@@ -234,7 +241,7 @@ local bindHotkey = function(app)
   end
   local key = getOriginKey(app.key) -- 找到大写对应的小写按键、“上档符号”所在的按键（比如“E“在键“e”上、“#”的键是“3”、“?”的键在“/”上）
   local message = nil
-  -- message = nil ~= app.path and string.match(app.path, '/([^/]-).app$') or nil
+  -- message = nil ~= app.path and getAppName(app.path) or nil
   if app.key ~= key then
     table.insert(hyper, 'shift')
   end
@@ -324,7 +331,7 @@ function obj:start()
       local cols = 2
       local appNameMaxLen = 0
       for _, v in ipairs(actions) do
-        local appName = nil ~= v.name and v.name or string.match(v.path, '/([^/]-).app$')
+        local appName = nil ~= v.name and v.name or getAppName(v.path)
         appNameMaxLen = #appName > appNameMaxLen and #appName or appNameMaxLen
       end
       local colWidth = #(capsLockSymbol .. '-? ') + appNameMaxLen
@@ -353,7 +360,7 @@ function obj:start()
             break
           end
           local key = capsLockSymbol .. '-' .. keyName2KeySymbol(v.key)
-          local val = nil ~= v.name and v.name or string.match(v.path, '/([^/]-).app$')
+          local val = nil ~= v.name and v.name or getAppName(v.path)
           local color = v.color or '#FFFFFF'
           local item = fillColor(key .. ' ', '#666666') .. fillColor(val, color)
           local itemLen = #(capsLockSymbol .. '-? ') + #val --  不使用 #item 是因为“←”等的长度不是1，可能是2、3（取决于字符的 utf8 长度），会导致对不齐
