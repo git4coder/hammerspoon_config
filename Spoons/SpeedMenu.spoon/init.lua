@@ -24,22 +24,23 @@ local function data_diff()
     local out_seq = hs.execute(obj.outstr)
     local in_diff = in_seq - obj.inseq
     local out_diff = out_seq - obj.outseq
-    -- if in_diff/1024 > 1024 then
-        obj.kbin = string.format("%4.2f", in_diff/1024/1024) .. 'm/s'
-    -- else
-    --     obj.kbin = string.format("%6.2f", in_diff/1024) .. 'K/s'
-    -- end
-    -- if out_diff/1024 > 1024 then
-        obj.kbout = string.format("%4.2f", out_diff/1024/1024) .. 'm/s'
-    -- else
-    --     obj.kbout = string.format("%6.2f", out_diff/1024) .. 'K/s'
-    -- end
+    if in_diff/1024 > 1024 then
+        obj.kbin = string.format("%5.2f", in_diff/1024/1024) .. 'M/s'
+    else
+        obj.kbin = string.format("%5.2f", in_diff/1024) .. 'K/s'
+    end
+    if out_diff/1024 > 1024 then
+        obj.kbout = string.format("%5.2f", out_diff/1024/1024) .. 'M/s'
+    else
+        obj.kbout = string.format("%5.2f", out_diff/1024) .. 'K/s'
+    end
     local disp_str = obj.kbout .. '\n' .. obj.kbin
     local text_style = {
       dark  = {
         font = {name = "Monaco", size = 8.0},
         color = {hex = "#FFFFFF"},
         paragraphStyle = {
+          alignment = 'right',
           maximumLineHeight = 12.0,
           minimumLineHeight = 0.0
         }
@@ -48,6 +49,7 @@ local function data_diff()
         font = {name = "Monaco", size = 8.0},
         color = {hex = "#000000"},
         paragraphStyle = {
+          alignment = 'right',
           maximumLineHeight = 12.0,
           minimumLineHeight = 0.0
         }
