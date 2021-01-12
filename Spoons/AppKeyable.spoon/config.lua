@@ -30,7 +30,9 @@ module.applications = {
   {key = 'm', color = '#FFFFFF', path = '/Applications/Motrix.app'},
   {key = 'M', color = '#FFFFFF', path = '/System/Applications/Utilities/Activity Monitor.app'},
   {key = 'p', color = '#FFFFFF', path = '/Applications/Postman.app'},
+  {key = 'P', color = '#FFFFFF', path = '/Applications/Affinity Photo.app'},
   {key = 'q', color = '#FFFFFF', path = '/Applications/QQ.app'},
+  {key = 'r', color = '#FFFFFF', path = '/Applications/Microsoft Remote Desktop.app'},
   {key = 's', color = '#FFFFFF', path = '/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app'},
   {key = 'S', color = '#FFFFFF', path = '/System/Applications/System Preferences.app'},
   {key = 'v', color = '#FFFFFF', path = '/Applications/Visual Studio Code.app'},
@@ -113,11 +115,6 @@ module.functions = {
       print(script)
       hs.osascript.applescript(script)
     end
-  },
-  {
-    name = 'F5',
-    key = 'r'
-    -- 需要在 Karabiner-Elements 里将 Control + Option + Command + r 映射到 F5 上，这里仅作提示
   }
 }
 
