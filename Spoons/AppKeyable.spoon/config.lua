@@ -16,6 +16,7 @@ module.applications = {
   {key = 'a', color = '#FFFFFF', path = '/Applications/Android Studio.app'},
   {key = 'A', color = '#FFFFFF', path = '/System/Applications/App Store.app'},
   {key = 'b', color = '#FFFFFF', path = '/Applications/Blender.app'},
+  {key = 'B', color = '#FFFFFF', path = '/System/Applications/Books.app'},
   {key = 'd', color = '#FFFFFF', path = '/Applications/DBeaver.app'},
   {key = 'D', color = '#FFFFFF', path = '/Applications/NeteaseDictionary.app'},
   {key = 'e', color = '#FFFFFF', path = '/System/Library/CoreServices/Finder.app'},
@@ -35,7 +36,7 @@ module.applications = {
   {key = 'r', color = '#FFFFFF', path = '/Applications/Microsoft Remote Desktop.app'},
   {key = 's', color = '#FFFFFF', path = '/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app'},
   {key = 'S', color = '#FFFFFF', path = '/System/Applications/System Preferences.app'},
-  {key = 'v', color = '#FFFFFF', path = '/Applications/Visual Studio Code.app'},
+  {key = 'v', color = '#03a9f4', path = '/Applications/Visual Studio Code.app'},
   {key = 'V', color = '#FFFFFF', path = '/Applications/VirtualBox.app/Contents/Resources/VirtualBoxVM.app'},
   {key = 'W', color = '#FFFFFF', path = '/Applications/WeChat.app'},
   {key = 'w', color = '#FFFFFF', path = '/Applications/wechatwebdevtools.app'},
@@ -113,6 +114,22 @@ module.functions = {
         do shell script "qlmanage -p %s"
       ]], file)
       print(script)
+      hs.osascript.applescript(script)
+    end
+  },
+  {
+    name = 'Lock Screen',
+    key = 'l',
+    fun = function()
+      -- 方法1：进入睡眠模式（黑屏，需要设置为恢复时输入密码）
+      -- local script = 'do shell script "pmset displaysleepnow"'
+
+      -- 方法2：启动屏保（需要设置为恢复时输入密码）
+      local script = [[
+        tell application "System Events" 
+          start current screen saver
+        end tell
+      ]]
       hs.osascript.applescript(script)
     end
   }
