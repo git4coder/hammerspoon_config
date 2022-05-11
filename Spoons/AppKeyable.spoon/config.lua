@@ -27,7 +27,7 @@ module.applications = {
   {key = 'i', color = '#FFFFFF', path = '/Applications/DingTalk.app'},
   {key = 'j', color = '#03a9f4', path = '/Applications/PhpStorm.app'}, 
   {key = 't', color = '#FFFFFF', path = '/System/Applications/Utilities/Terminal.app'},
-  {key = 'o', color = '#FFFFFF', path = '/Applications/wpsoffice.app'},
+  {key = 'o', color = '#FFFFFF', path = '/Applications/Typora.app'},
   {key = 'm', color = '#FFFFFF', path = '/Applications/Motrix.app'},
   {key = 'M', color = '#FFFFFF', path = '/System/Applications/Utilities/Activity Monitor.app'},
   {key = 'p', color = '#FFFFFF', path = '/Applications/Postman.app'},
