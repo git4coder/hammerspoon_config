@@ -19,7 +19,7 @@ hs.alert.defaultStyle.textSize     = 16
 hs.alert.defaultStyle.atScreenEdge = 0
 
 hs.loadSpoon("AppKeyable") -- 给APP绑定独立的激活键
-hs.loadSpoon("SpeedMenu") -- 状态栏的下/下截网速
+--hs.loadSpoon("SpeedMenu") -- 状态栏的下/下截网速
 hs.loadSpoon("ReloadConfiguration") -- 自动重载 Hammerspoon 配置
 
 spoon.ReloadConfiguration:start()

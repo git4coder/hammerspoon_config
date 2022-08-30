@@ -11,37 +11,39 @@ local module = {}
 
 module.hyper = {'control', 'option', 'command'} -- 不要加 shift，shift 在使用“大写字母”、“需要按Shift才能输入的符号”时会自动补上
 module.todoFile = '~/Documents/todo.txt' -- 这是默认值，所以此行可删除
-
+-- lnu
 module.applications = {
   {key = 'a', color = '#FFFFFF', path = '/Applications/Android Studio.app'},
   {key = 'A', color = '#FFFFFF', path = '/System/Applications/App Store.app'},
   {key = 'b', color = '#FFFFFF', path = '/Applications/Blender.app'},
   {key = 'B', color = '#FFFFFF', path = '/System/Applications/Books.app'},
+  {key = 'c', color = '#FFFFFF', path = '/Applications/Google Chrome.app'},
+  {key = 'C', color = '#FFFFFF', path = '/System/Applications/Contacts.app'},
   {key = 'd', color = '#FFFFFF', path = '/Applications/DBeaver.app'},
   {key = 'D', color = '#FFFFFF', path = '/Applications/NeteaseDictionary.app'},
-  {key = 'e', color = '#FFFFFF', path = '/System/Library/CoreServices/Finder.app'},
-  {key = 'E', color = '#FFFFFF', path = '/System/Applications/TextEdit.app'},
-  {key = 'f', color = '#FFFFFF', path = '/Applications/Fork.app'},
-  {key = 'F', color = '#FFFFFF', path = '/Applications/Seafile Client.app'},
-  {key = 'g', color = '#FFFFFF', path = '/Applications/Google Chrome.app'},
-  {key = 'i', color = '#FFFFFF', path = '/Applications/DingTalk.app'},
+  {key = 'e', color = '#FFFFFF', path = '/System/Applications/TextEdit.app'}, -- Editor
+  {key = 'E', color = '#FFFFFF', path = '/Applications/Typora.app'},
+  {key = 'f', color = '#FFFFFF', path = '/System/Library/CoreServices/Finder.app'},
+  {key = 'F', color = '#FFFFFF', path = '/System/Applications/FaceTime.app'},
+  {key = 'g', color = '#FFFFFF', path = '/Applications/Fork.app'}, -- Git fork
+  {key = 'i', color = '#FFFFFF', path = '/Applications/Postman.app'},
   {key = 'j', color = '#03a9f4', path = '/Applications/PhpStorm.app'}, 
-  {key = 't', color = '#FFFFFF', path = '/System/Applications/Utilities/Terminal.app'},
-  {key = 'o', color = '#FFFFFF', path = '/Applications/Typora.app'},
-  {key = 'm', color = '#FFFFFF', path = '/Applications/Motrix.app'},
-  {key = 'M', color = '#FFFFFF', path = '/System/Applications/Utilities/Activity Monitor.app'},
-  {key = 'p', color = '#FFFFFF', path = '/Applications/Postman.app'},
-  {key = 'P', color = '#FFFFFF', path = '/Applications/Affinity Photo.app'},
+  {key = 'k', color = '#FFFFFF', path = '/System/Applications/Utilities/Activity Monitor.app'},
+  {key = 'm', color = '#FFFFFF', path = '/System/Applications/Messages.app'},
+  {key = 'M', color = '#FFFFFF', path = '/Applications/Motrix.app'},
+  {key = 'o', color = '#FFFFFF', path = '/Applications/wpsoffice.app'},
+  {key = 'p', color = '#FFFFFF', path = '/Applications/Affinity Photo.app'},
   {key = 'q', color = '#FFFFFF', path = '/Applications/QQ.app'},
   {key = 'r', color = '#FFFFFF', path = '/Applications/Microsoft Remote Desktop.app'},
   {key = 's', color = '#FFFFFF', path = '/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app'},
   {key = 'S', color = '#FFFFFF', path = '/System/Applications/System Preferences.app'},
+  {key = 't', color = '#FFFFFF', path = '/System/Applications/Utilities/Terminal.app'},
   {key = 'v', color = '#03a9f4', path = '/Applications/Visual Studio Code.app'},
   {key = 'V', color = '#FFFFFF', path = '/Applications/VirtualBox.app/Contents/Resources/VirtualBoxVM.app'},
-  {key = 'W', color = '#FFFFFF', path = '/Applications/WeChat.app'},
-  {key = 'w', color = '#FFFFFF', path = '/Applications/wechatwebdevtools.app'},
+  {key = 'w', color = '#FFFFFF', path = '/Applications/WeChat.app'},
+  {key = 'W', color = '#FFFFFF', path = '/Applications/wechatwebdevtools.app'},
   {key = 'x', color = '#FFFFFF', path = '/Applications/Xcode.app'},
-  {key = 'y', color = '#FFFFFF', path = '/Applications/NeteaseMusic.app'}
+  {key = 'y', color = '#FFFFFF', path = '/Applications/NeteaseMusic.app'},
 }
 
 module.functions = {
