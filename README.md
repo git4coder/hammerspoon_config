@@ -40,14 +40,14 @@ Hammerspoon 用户可使用这个方法追加到已有配置中
 
 ```lua
 hs.loadSpoon("AppKeyable")
-spoon.AppKeyable.hyper = {'ctrl', 'alt', 'cmd'}
-spoon.AppKeyable.applications = {
+spoon.AppKeyable.config.hyper = {'ctrl', 'alt', 'cmd'}
+spoon.AppKeyable.config.applications = {
   {key = 'a', path = '/Applications/Affinity Photo.app'},
   {key = 'b', path = '/Applications/Bear.app'},
   {key = 'B', path = '/Applications/Blender.app'},
   -- more applications ...
 }
-spoon.AppKeyable.functions = {} -- 空 table 关掉自带的 functions
+spoon.AppKeyable.config.functions = {} -- 空 table 关掉自带的 functions
 spoon.AppKeyable:start()
 ```
 

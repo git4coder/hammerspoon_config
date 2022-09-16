@@ -22,6 +22,40 @@ hs.loadSpoon("AppKeyable") -- 给APP绑定独立的激活键
 --hs.loadSpoon("SpeedMenu") -- 状态栏的下/下截网速
 hs.loadSpoon("ReloadConfiguration") -- 自动重载 Hammerspoon 配置
 
+spoon.AppKeyable.config.applications = {
+  {key = 'a', color = '#FFFFFF', path = '/Applications/Android Studio.app'},
+  {key = 'A', color = '#FFFFFF', path = '/System/Applications/App Store.app'},
+  {key = 'b', color = '#FFFFFF', path = '/Applications/Blender.app'},
+  {key = 'B', color = '#FFFFFF', path = '/System/Applications/Books.app'},
+  {key = 'c', color = '#FFFFFF', path = '/Applications/Google Chrome.app'},
+  {key = 'C', color = '#FFFFFF', path = '/System/Applications/Contacts.app'},
+  {key = 'd', color = '#FFFFFF', path = '/Applications/DBeaver.app'},
+  {key = 'D', color = '#FFFFFF', path = '/Applications/NeteaseDictionary.app'},
+  {key = 'e', color = '#FFFFFF', path = '/System/Applications/TextEdit.app'}, -- Editor
+  {key = 'E', color = '#FFFFFF', path = '/Applications/Typora.app'},
+  {key = 'f', color = '#FFFFFF', path = '/System/Library/CoreServices/Finder.app'},
+  {key = 'F', color = '#FFFFFF', path = '/System/Applications/FaceTime.app'},
+  {key = 'g', color = '#FFFFFF', path = '/Applications/Fork.app'}, -- Git fork
+  {key = 'i', color = '#FFFFFF', path = '/Applications/Postman.app'},
+  {key = 'j', color = '#03a9f4', path = '/Applications/PhpStorm.app'}, 
+  {key = 'k', color = '#FFFFFF', path = '/System/Applications/Utilities/Activity Monitor.app'},
+  {key = 'm', color = '#FFFFFF', path = '/System/Applications/Messages.app'},
+  {key = 'M', color = '#FFFFFF', path = '/Applications/Motrix.app'},
+  {key = 'o', color = '#FFFFFF', path = '/Applications/wpsoffice.app'},
+  {key = 'p', color = '#FFFFFF', path = '/Applications/Affinity Photo.app'},
+  {key = 'q', color = '#FFFFFF', path = '/Applications/QQ.app'},
+  {key = 'r', color = '#FFFFFF', path = '/Applications/Microsoft Remote Desktop.app'},
+  {key = 's', color = '#FFFFFF', path = '/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app'},
+  {key = 'S', color = '#FFFFFF', path = '/System/Applications/System Preferences.app'},
+  {key = 't', color = '#FFFFFF', path = '/System/Applications/Utilities/Terminal.app'},
+  {key = 'v', color = '#03a9f4', path = '/Applications/Visual Studio Code.app'},
+  {key = 'V', color = '#FFFFFF', path = '/Applications/VirtualBox.app/Contents/Resources/VirtualBoxVM.app'},
+  {key = 'w', color = '#FFFFFF', path = '/Applications/WeChat.app'},
+  {key = 'W', color = '#FFFFFF', path = '/Applications/wechatwebdevtools.app'},
+  {key = 'x', color = '#FFFFFF', path = '/Applications/Xcode.app'},
+  {key = 'y', color = '#FFFFFF', path = '/Applications/NeteaseMusic.app'},
+}
+
 spoon.ReloadConfiguration:start()
 spoon.AppKeyable:start()
 -- spoon.SpeedMenu:start() -- 不需要 start，loadSpoon() 时已经自动启动了
