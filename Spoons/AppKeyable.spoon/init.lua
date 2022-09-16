@@ -97,11 +97,27 @@ local fillColor = function(string, color, alpha)
   )
 end
 
+-- 文件是否存在
+local fileExists = function(path)
+  local f = io.open(path, 'r')
+  if f then
+    io.close(f) -- f:close()
+  end
+  return f ~= nil
+end
+
 -- 从 path 中取 app 的名字
 local getAppName = function(path)
-  local name = 'NO_NAME';
-  print(path)
-  return string.match(path, '/([^/]-)%.app$') or name
+  -- local name = 'NO_NAME';
+  -- print(path)
+  -- return string.match(path, '/([^/]-)%.app$') or name
+  local appName = string.match(path, '/([^/]-)%.app$') or 'NO_NAME'
+  -- 不存在的文件名后添加“404”
+  local isFileExists = fileExists(path)
+  if false == isFileExists then
+    appName = appName .. ' - nil'
+  end
+  return appName
 end
 
 --  打开/切换到App(可以在当前 APP 的窗口间切换)
@@ -123,6 +139,11 @@ local launchOrFocusWindowByPath = function(path)
     message = fillColor(key .. ': ', '#666666') .. fillColor(message, '#FFFFFF')
     hs.alert.show(message, alertStyle, hs.screen.mainScreen(), 0.5)
 
+    -- 不存在时什么也不做
+    if false == fileExists(path) then
+      return false
+    end
+
     local curApp = hs.application.frontmostApplication()
     -- print(getAppName(path)) .. ' <-- ' .. getAppName(curApp:path())
     if curApp:path() == path then -- 当前 APP 就是要打开的 APP 时找到当前 APP 的下一个窗口
@@ -143,8 +164,8 @@ local launchOrFocusWindowByPath = function(path)
         ]]
       -- 只有一个窗口时直接返回
       if #wins == 1 then
-        for _,v in ipairs(wins) do
-          if true ==  v:isMinimized() then
+        for _, v in ipairs(wins) do
+          if true == v:isMinimized() then
             v:unminimize()
           end
         end
@@ -166,7 +187,7 @@ local launchOrFocusWindowByPath = function(path)
       -- 把第一个窗口追加到末尾，用于当前窗口是最后一个窗口时可以快速找到下一个窗口
       for k, v in ipairs(wins) do
         if v:id() == curWin:id() then
-          if true ==  wins[k + 1]:isMinimized() then
+          if true == wins[k + 1]:isMinimized() then
             wins[k + 1]:unminimize()
           end
           wins[k + 1]:focus()
@@ -203,7 +224,9 @@ end
 -- 为 applications 和 functions 绑定快捷键的方法
 local bindHotkey = function(app)
   -- in case called as function
-  if self ~= obj then self = obj end
+  if self ~= obj then
+    self = obj
+  end
 
   local hyper = hs.fnutils.copy(obj.config.hyper) -- clone
   -- 找到需要按shift才能打出的符号字母所在的键
@@ -263,7 +286,8 @@ function obj:init()
 end
 
 function obj:start()
-  local hyper = hs.fnutils.filter(
+  local hyper =
+    hs.fnutils.filter(
     self.config.hyper,
     function(v)
       return string.lower(v) ~= 'shift'
@@ -286,7 +310,8 @@ function obj:start()
   )
 
   -- 显示帮助 ?
-  local helpHTML = '<style>\
+  local helpHTML =
+    '<style>\
     .box {\
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;\
       background:rgba(255,255,255,.8);\
@@ -298,25 +323,31 @@ function obj:start()
     }\
     ul {list-style:none;margin:0;padding:5px;}\
     ul:after {content:"";display:block;clear:both;}\
-    ul li {padding:5px;width:80px;box-sizing:border-box;float:left;text-align:center;overflow:hidden;position:relative;}\
+    ul li {padding:5px;width:80px;border-radius:5px;box-sizing:border-box;float:left;text-align:center;overflow:hidden;position:relative;}\
+    ul li:hover {background:#0000004d;color:#ffffff;}\
     ul li img {width:100%;object-fit:contain;}\
     ul li .name {white-space:nowrap;font-size:8px;}\
     ul li .key {font-size:20px;line-height:1;padding:2px 5px;border-radius:0 5px;position:absolute;top:10px;right:10px;background:rgba(0,0,0,.7);color:#FFF;}\
     </style><div class="box"><ul>'
-  local applicationCount = 0;
+  local applicationCount = 0
   hs.fnutils.each(
     self.config.applications,
     function(app)
       local meta = hs.application.infoForBundlePath(app.path)
       if nil ~= meta then
-        applicationCount = applicationCount + 1;
+        applicationCount = applicationCount + 1
         local bundleID = meta['CFBundleIdentifier']
         local icon = hs.image.imageFromAppBundle(bundleID)
         local name = hs.application.nameForBundleID(bundleID)
         local imgData = icon:encodeAsURLString() -- data:image/png;base64,iVBORw...
-        helpHTML = helpHTML .. '<li>\
-            <img src="'..imgData..'">\
-            <div class="name">' .. name .. '</div>\
+        helpHTML =
+          helpHTML ..
+          '<li>\
+            <img src="' ..
+            imgData ..
+              '">\
+            <div class="name">' ..
+                name .. '</div>\
             <div class="key">' .. app.key .. '</div>\
           </li>'
       end
@@ -346,9 +377,10 @@ function obj:start()
   helpView:bringToFront(true)
   helpView:transparent(true)
   helpView:html(helpHTML)
-  local helpBound = hs.hotkey.bind(
-    hyper,
-    'h',
+  local helpBound =
+    hs.hotkey.bind(
+    {'control', 'option', 'command', 'shift'},
+    '/',
     function()
       if helpView and helpView:hswindow() and helpView:hswindow():isVisible() then
         helpView:hide()
@@ -360,7 +392,8 @@ function obj:start()
   table.insert(self.boundHotkey, helpBound)
 
   -- 显示帮助 /
-  local bound = hs.hotkey.bind(
+  local bound =
+    hs.hotkey.bind(
     hyper,
     '/',
     function()
