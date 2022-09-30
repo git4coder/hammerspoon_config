@@ -105,28 +105,52 @@ spoon.AppKeyable:start()
         }
       ]
     },
-    {
-      "description": "hyper + r to F5",
+    {   
+      "description": "独按两边的 shift 改为 f17 和 f18",
       "manipulators": [
-        {
+        {   
           "type": "basic",
           "from": {
-            "key_code": "r",
+            "key_code": "left_shift",
             "modifiers": {
-              "mandatory": [
-                "right_command",
-                "right_control",
-                "right_option"
-              ]
-            }
-          },
+              "optional": [
+                "any"
+              ]   
+            }   
+          },  
           "to": [
-            {
-              "key_code": "f5"
-            }
-          ]
-        }
-      ]
+            {   
+              "key_code": "left_shift"
+            }   
+          ],  
+          "to_if_alone": [
+            {   
+              "key_code": "f17"
+            }   
+          ]   
+        },  
+        {   
+          "type": "basic",
+          "from": {
+            "key_code": "right_shift",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]   
+            }   
+          },  
+          "to": [
+            {   
+              "key_code": "right_shift"
+            }   
+          ],  
+          "to_if_alone": [
+            {   
+              "key_code": "f18"                                                                                                                                                                             
+            }   
+          ]   
+        }   
+      ]   
     }
   ]
 }

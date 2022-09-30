@@ -309,87 +309,87 @@ function obj:start()
     end
   )
 
-  -- 显示帮助 ?
-  local helpHTML =
-    '<style>\
-    .box {\
-    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;\
-      background:rgba(255,255,255,.8);\
-      backdrop-filter: blur(10px);\
-      color:#000;\
-      border-radius:10px;\
-      height:100%;\
-      box-sizing:border-box;\
-    }\
-    ul {list-style:none;margin:0;padding:5px;}\
-    ul:after {content:"";display:block;clear:both;}\
-    ul li {padding:5px;width:80px;border-radius:5px;box-sizing:border-box;float:left;text-align:center;overflow:hidden;position:relative;}\
-    ul li:hover {background:#0000004d;color:#ffffff;}\
-    ul li img {width:100%;object-fit:contain;}\
-    ul li .name {white-space:nowrap;font-size:8px;}\
-    ul li .key {font-size:20px;line-height:1;padding:2px 5px;border-radius:0 5px;position:absolute;top:10px;right:10px;background:rgba(0,0,0,.7);color:#FFF;}\
-    </style><div class="box"><ul>'
-  local applicationCount = 0
-  hs.fnutils.each(
-    self.config.applications,
-    function(app)
-      local meta = hs.application.infoForBundlePath(app.path)
-      if nil ~= meta then
-        applicationCount = applicationCount + 1
-        local bundleID = meta['CFBundleIdentifier']
-        local icon = hs.image.imageFromAppBundle(bundleID)
-        local name = hs.application.nameForBundleID(bundleID)
-        local imgData = icon:encodeAsURLString() -- data:image/png;base64,iVBORw...
-        helpHTML =
-          helpHTML ..
-          '<li>\
-            <img src="' ..
-            imgData ..
-              '">\
-            <div class="name">' ..
-                name .. '</div>\
-            <div class="key">' .. app.key .. '</div>\
-          </li>'
-      end
-    end
-  )
-  helpHTML = helpHTML .. '</ul></div>'
-  local cscreen = hs.screen.mainScreen()
-  local cres = cscreen:fullFrame()
-  local dialogWidth = 80 * 10 + 30
-  local dialogHeight = math.ceil(applicationCount / 10) * 100
-  local helpView =
-    hs.webview.new(
-    {
-      x = cres.x + (cres.w - dialogWidth) / 2,
-      y = cres.y + (cres.h - dialogHeight) / 2,
-      w = dialogWidth,
-      h = dialogHeight
-    },
-    {
-      javaScriptEnabled = false,
-      javaScriptCanOpenWindowsAutomatically = false
-    }
-  )
-  helpView:shadow(true)
-  helpView:closeOnEscape(true)
-  helpView:darkMode(true)
-  helpView:bringToFront(true)
-  helpView:transparent(true)
-  helpView:html(helpHTML)
-  local helpBound =
-    hs.hotkey.bind(
-    {'control', 'option', 'command', 'shift'},
-    '/',
-    function()
-      if helpView and helpView:hswindow() and helpView:hswindow():isVisible() then
-        helpView:hide()
-      else
-        helpView:show()
-      end
-    end
-  )
-  table.insert(self.boundHotkey, helpBound)
+  ---- 显示帮助 ?
+  --local helpHTML =
+  --  '<style>\
+  --  .box {\
+  --  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;\
+  --    background:rgba(255,255,255,.8);\
+  --    backdrop-filter: blur(10px);\
+  --    color:#000;\
+  --    border-radius:10px;\
+  --    height:100%;\
+  --    box-sizing:border-box;\
+  --  }\
+  --  ul {list-style:none;margin:0;padding:5px;}\
+  --  ul:after {content:"";display:block;clear:both;}\
+  --  ul li {padding:5px;width:80px;border-radius:5px;box-sizing:border-box;float:left;text-align:center;overflow:hidden;position:relative;}\
+  --  ul li:hover {background:#0000004d;color:#ffffff;}\
+  --  ul li img {width:100%;object-fit:contain;}\
+  --  ul li .name {white-space:nowrap;font-size:8px;}\
+  --  ul li .key {font-size:20px;line-height:1;padding:2px 5px;border-radius:0 5px;position:absolute;top:10px;right:10px;background:rgba(0,0,0,.7);color:#FFF;}\
+  --  </style><div class="box"><ul>'
+  --local applicationCount = 0
+  --hs.fnutils.each(
+  --  self.config.applications,
+  --  function(app)
+  --    local meta = hs.application.infoForBundlePath(app.path)
+  --    if nil ~= meta then
+  --      applicationCount = applicationCount + 1
+  --      local bundleID = meta['CFBundleIdentifier']
+  --      local icon = hs.image.imageFromAppBundle(bundleID)
+  --      local name = hs.application.nameForBundleID(bundleID)
+  --      local imgData = icon:encodeAsURLString() -- data:image/png;base64,iVBORw...
+  --      helpHTML =
+  --        helpHTML ..
+  --        '<li>\
+  --          <img src="' ..
+  --          imgData ..
+  --            '">\
+  --          <div class="name">' ..
+  --              name .. '</div>\
+  --          <div class="key">' .. app.key .. '</div>\
+  --        </li>'
+  --    end
+  --  end
+  --)
+  --helpHTML = helpHTML .. '</ul></div>'
+  --local cscreen = hs.screen.mainScreen()
+  --local cres = cscreen:fullFrame()
+  --local dialogWidth = 80 * 10 + 30
+  --local dialogHeight = math.ceil(applicationCount / 10) * 100
+  --local helpView =
+  --  hs.webview.new(
+  --  {
+  --    x = cres.x + (cres.w - dialogWidth) / 2,
+  --    y = cres.y + (cres.h - dialogHeight) / 2,
+  --    w = dialogWidth,
+  --    h = dialogHeight
+  --  },
+  --  {
+  --    javaScriptEnabled = false,
+  --    javaScriptCanOpenWindowsAutomatically = false
+  --  }
+  --)
+  --helpView:shadow(true)
+  --helpView:closeOnEscape(true)
+  --helpView:darkMode(true)
+  --helpView:bringToFront(true)
+  --helpView:transparent(true)
+  --helpView:html(helpHTML)
+  --local helpBound =
+  --  hs.hotkey.bind(
+  --  {'control', 'option', 'command', 'shift'},
+  --  '/',
+  --  function()
+  --    if helpView and helpView:hswindow() and helpView:hswindow():isVisible() then
+  --      helpView:hide()
+  --    else
+  --      helpView:show()
+  --    end
+  --  end
+  --)
+  --table.insert(self.boundHotkey, helpBound)
 
   -- 显示帮助 /
   local bound =

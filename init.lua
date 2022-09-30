@@ -30,29 +30,33 @@ spoon.AppKeyable.config.applications = {
   {key = 'c', color = '#FFFFFF', path = '/Applications/Google Chrome.app'},
   {key = 'C', color = '#FFFFFF', path = '/System/Applications/Contacts.app'},
   {key = 'd', color = '#FFFFFF', path = '/Applications/DBeaver.app'},
-  {key = 'D', color = '#FFFFFF', path = '/Applications/NeteaseDictionary.app'},
-  {key = 'e', color = '#FFFFFF', path = '/System/Applications/TextEdit.app'}, -- Editor
-  {key = 'E', color = '#FFFFFF', path = '/Applications/Typora.app'},
+  -- {key = 'D', color = '#FFFFFF', path = '/Applications/NeteaseDictionary.app'},
+  {key = 'E', color = '#FFFFFF', path = '/System/Applications/TextEdit.app'}, -- Editor
+  {key = 'e', color = '#FFFFFF', path = '/Applications/Typora.app'},
   {key = 'f', color = '#FFFFFF', path = '/System/Library/CoreServices/Finder.app'},
   {key = 'F', color = '#FFFFFF', path = '/System/Applications/FaceTime.app'},
   {key = 'g', color = '#FFFFFF', path = '/Applications/Fork.app'}, -- Git fork
+  {key = 'G', color = '#FFFFFF', path = '/Applications/WeWork.app'},
+  {key = 'h', color = '#FFFFFF', path = '/Applications/HBuilderX.app'},
   {key = 'i', color = '#FFFFFF', path = '/Applications/Postman.app'},
-  {key = 'j', color = '#03a9f4', path = '/Applications/PhpStorm.app'}, 
+  -- {key = 'j', color = '#03a9f4', path = '/Applications/PhpStorm.app'},
   {key = 'k', color = '#FFFFFF', path = '/System/Applications/Utilities/Activity Monitor.app'},
   {key = 'm', color = '#FFFFFF', path = '/System/Applications/Messages.app'},
-  {key = 'M', color = '#FFFFFF', path = '/Applications/Motrix.app'},
+  {key = 'M', color = '#FFFFFF', path = '/Applications/TencentMeeting.app'},
   {key = 'o', color = '#FFFFFF', path = '/Applications/wpsoffice.app'},
   {key = 'p', color = '#FFFFFF', path = '/Applications/Affinity Photo.app'},
+  {key = 'P', color = '#FFFFFF', path = '/Applications/Postman.app'},
   {key = 'q', color = '#FFFFFF', path = '/Applications/QQ.app'},
   {key = 'r', color = '#FFFFFF', path = '/Applications/Microsoft Remote Desktop.app'},
   {key = 's', color = '#FFFFFF', path = '/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app'},
   {key = 'S', color = '#FFFFFF', path = '/System/Applications/System Preferences.app'},
   {key = 't', color = '#FFFFFF', path = '/System/Applications/Utilities/Terminal.app'},
   {key = 'v', color = '#03a9f4', path = '/Applications/Visual Studio Code.app'},
-  {key = 'V', color = '#FFFFFF', path = '/Applications/VirtualBox.app/Contents/Resources/VirtualBoxVM.app'},
+  {key = 'V', color = '#FFFFFF', path = '/Applications/wechatwebdevtools.app'},
   {key = 'w', color = '#FFFFFF', path = '/Applications/WeChat.app'},
-  {key = 'W', color = '#FFFFFF', path = '/Applications/wechatwebdevtools.app'},
+  {key = 'W', color = '#FFFFFF', path = '/Applications/WeWork.app'},
   {key = 'x', color = '#FFFFFF', path = '/Applications/Xcode.app'},
+  {key = 'X', color = '#FFFFFF', path = '/Applications/SunloginClient.app'},
   {key = 'y', color = '#FFFFFF', path = '/Applications/NeteaseMusic.app'},
 }
 
@@ -66,3 +70,24 @@ hs.hotkey.bind({'cmd'}, 'e',
     hs.execute('open ~/Projects')
   end
 )
+
+-- 切换输入法
+hs.hotkey.bind({}, 'f17',
+  function()
+    hs.hid.capslock.set(false)
+    local im = "com.apple.inputmethod.SCIM.WBX"
+    hs.keycodes.currentSourceID(im)
+    hs.alert.closeAll()
+    hs.alert.show("中文")
+  end
+)
+hs.hotkey.bind({}, 'f18',
+  function()
+    hs.hid.capslock.set(false)
+    local im = "com.apple.keylayout.ABC"
+    hs.keycodes.currentSourceID(im)
+    hs.alert.closeAll()
+    hs.alert.show("English")
+  end
+)
+
