@@ -103,16 +103,7 @@ module.functions = {
     name = 'Lock Screen',
     key = 'l',
     fun = function()
-      -- 方法1：进入睡眠模式（黑屏，需要设置为恢复时输入密码）
-      -- local script = 'do shell script "pmset displaysleepnow"'
-
-      -- 方法2：启动屏保（需要设置为恢复时输入密码）
-      local script = [[
-        tell application "System Events" 
-          start current screen saver
-        end tell
-      ]]
-      hs.osascript.applescript(script)
+      hs.caffeinate.lockScreen()
     end
   }
 }

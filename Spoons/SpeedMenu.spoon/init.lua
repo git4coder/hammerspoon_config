@@ -25,33 +25,29 @@ local function data_diff()
     local in_diff = in_seq - obj.inseq
     local out_diff = out_seq - obj.outseq
     if in_diff/1024 > 1024 then
-        obj.kbin = string.format("%5.2f", in_diff/1024/1024) .. 'M/s'
+        obj.kbin = string.format("%.0f", in_diff/1024/1024) .. 'M/s'
     else
-        obj.kbin = string.format("%5.2f", in_diff/1024) .. 'K/s'
+        obj.kbin = string.format("%.0f", in_diff/1024) .. 'K/s'
     end
     if out_diff/1024 > 1024 then
-        obj.kbout = string.format("%5.2f", out_diff/1024/1024) .. 'M/s'
+        obj.kbout = string.format("%.0f", out_diff/1024/1024) .. 'M'
     else
-        obj.kbout = string.format("%5.2f", out_diff/1024) .. 'K/s'
+        obj.kbout = string.format("%.0f", out_diff/1024) .. 'K'
     end
-    local disp_str = obj.kbout .. '\n' .. obj.kbin
+    local disp_str = obj.kbout .. ',' .. obj.kbin
     local text_style = {
       dark  = {
-        font = {name = "Monaco", size = 8.0},
+        font = {name = "Monaco", size = 12.0},
         color = {hex = "#FFFFFF"},
         paragraphStyle = {
           alignment = 'right',
-          maximumLineHeight = 12.0,
-          minimumLineHeight = 0.0
         }
       },
       light = {
-        font = {name = "Monaco", size = 8.0},
+        font = {name = "Monaco", size = 12.0},
         color = {hex = "#000000"},
         paragraphStyle = {
           alignment = 'right',
-          maximumLineHeight = 12.0,
-          minimumLineHeight = 0.0
         }
       }
     }

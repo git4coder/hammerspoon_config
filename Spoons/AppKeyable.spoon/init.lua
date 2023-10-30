@@ -156,12 +156,12 @@ local launchOrFocusWindowByPath = function(path)
         end
       )
       --[[
-        -- 调试用
-        print('#wins: ' .. #wins .. ' <-- ' .. getAppName(path))
-        for i,v in ipairs(curApp:allWindows()) do
-          print(i, v:role(), v:title())
-        end
-        ]]
+      -- 调试用
+      print('#wins: ' .. #wins .. ' --> ' .. getAppName(path))
+      for i,v in ipairs(wins) do
+        print(i, v:id(), v:role(), v:title())
+      end
+      ]]
       -- 只有一个窗口时直接返回
       if #wins == 1 then
         for _, v in ipairs(wins) do
@@ -183,8 +183,8 @@ local launchOrFocusWindowByPath = function(path)
           return x:id() < y:id()
         end
       )
-      wins[#wins + 1] = wins[1] -- 把第一个窗口追加到末尾，用于当前窗口是最后一个窗口时可以快速找到下一个窗口
       -- 把第一个窗口追加到末尾，用于当前窗口是最后一个窗口时可以快速找到下一个窗口
+      wins[#wins + 1] = wins[1]
       for k, v in ipairs(wins) do
         if v:id() == curWin:id() then
           if true == wins[k + 1]:isMinimized() then
