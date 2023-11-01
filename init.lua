@@ -1,26 +1,27 @@
-print("#######################")
-print(">> Hammerspoon Init ...")
+print('#######################')
+print('>> Hammerspoon Init ...')
+Profile = require('profile')
 hs.window.animationDuration = 0 -- 禁用动画，默认 0.2 https://github.com/Hammerspoon/hammerspoon/issues/1936
 
 hs.console.darkMode(true)
 if hs.console.darkMode() then
-    hs.console.outputBackgroundColor({ white = 0, alpha = 0.5 })
-    hs.console.consoleCommandColor({ white = 1, alpha = 0.7 })
-    hs.console.alpha(1.00)
+  hs.console.outputBackgroundColor({white = 0, alpha = 0.5})
+  hs.console.consoleCommandColor({white = 1, alpha = 0.7})
+  hs.console.alpha(1.00)
 end
 
 -- 全局 hs.alert 样式
-hs.alert.defaultStyle.textColor    = hs.drawing.color.asRGB({hex = '#FFFFFF', alpha = 1.00}) -- 文本色
-hs.alert.defaultStyle.fillColor    = hs.drawing.color.asRGB({hex = '#000000', alpha = 0.75}) -- 背景色
-hs.alert.defaultStyle.strokeColor  = hs.drawing.color.asRGB({hex = '#FFFFFF', alpha = 0.30}) -- 边框色
-hs.alert.defaultStyle.radius       = 5
-hs.alert.defaultStyle.textFont     = 'Monaco'
-hs.alert.defaultStyle.textSize     = 16
+hs.alert.defaultStyle.textColor = hs.drawing.color.asRGB({hex = '#FFFFFF', alpha = 1.00}) -- 文本色
+hs.alert.defaultStyle.fillColor = hs.drawing.color.asRGB({hex = '#000000', alpha = 0.75}) -- 背景色
+hs.alert.defaultStyle.strokeColor = hs.drawing.color.asRGB({hex = '#FFFFFF', alpha = 0.30}) -- 边框色
+hs.alert.defaultStyle.radius = 5
+hs.alert.defaultStyle.textFont = 'Monaco'
+hs.alert.defaultStyle.textSize = 16
 hs.alert.defaultStyle.atScreenEdge = 0
 
-hs.loadSpoon("AppKeyable") -- 给APP绑定独立的激活键
+hs.loadSpoon('AppKeyable') -- 给APP绑定独立的激活键
 --hs.loadSpoon("SpeedMenu") -- 状态栏的下/下截网速
-hs.loadSpoon("ReloadConfiguration") -- 自动重载 Hammerspoon 配置
+hs.loadSpoon('ReloadConfiguration') -- 自动重载 Hammerspoon 配置
 
 spoon.AppKeyable.config.applications = {
   {key = 'A', color = '#FFFFFF', path = '/System/Applications/App Store.app'},
@@ -59,7 +60,7 @@ spoon.AppKeyable.config.applications = {
   {key = 'W', color = '#FFFFFF', path = '/Applications/WeWork.app'},
   {key = 'x', color = '#FFFFFF', path = '/Applications/Xmind.app'},
   {key = 'X', color = '#FFFFFF', path = '/Applications/Xcode.app'},
-  {key = 'y', color = '#FFFFFF', path = '/Applications/NeteaseMusic.app'},
+  {key = 'y', color = '#FFFFFF', path = '/Applications/NeteaseMusic.app'}
 }
 
 spoon.ReloadConfiguration:start()
@@ -67,61 +68,77 @@ spoon.AppKeyable:start()
 -- spoon.SpeedMenu:start() -- 不需要 start，loadSpoon() 时已经自动启动了
 
 -- 打开项目所在文件夹
-hs.hotkey.bind({'cmd'}, 'e',
+hs.hotkey.bind(
+  {'cmd'},
+  'e',
   function()
     hs.execute('open ~/Projects')
   end
 )
 
 -- 切换输入法
-hs.hotkey.bind({}, 'f18',
+hs.hotkey.bind(
+  {},
+  'f18',
   function()
     hs.hid.capslock.set(false)
-    local im = "com.apple.inputmethod.SCIM.WBX"
+    local im = 'com.apple.inputmethod.SCIM.WBX'
     hs.keycodes.currentSourceID(im)
     hs.alert.closeAll()
-    hs.alert.show("🇨🇳中文", 0.3)
+    hs.alert.show('🇨🇳中文', 0.3)
   end
 )
-hs.hotkey.bind({}, 'f17',
+hs.hotkey.bind(
+  {},
+  'f17',
   function()
     hs.hid.capslock.set(false)
-    local im = "com.apple.keylayout.ABC"
+    local im = 'com.apple.keylayout.ABC'
     hs.keycodes.currentSourceID(im)
     hs.alert.closeAll()
-    hs.alert.show("🇬🇧English", 0.3)
+    hs.alert.show('🇬🇧English', 0.3)
   end
 )
+
+-- https://stackoverflow.com/questions/656199/search-for-an-item-in-a-lua-list
+function Set(list)
+  local set = {}
+  for _, l in ipairs(list) do
+    set[l] = true
+  end
+  return set
+end
 
 -- 不同位置的 WiFi 使用不同的网络配置
 function SSIDChanged()
-    hs.location.start()
-    local mac = hs.wifi.interfaceDetails().bssid
-    local ssid = hs.wifi.currentNetwork()
-    hs.location.stop()
-    local uuid = 'A2DF6E86-2F00-481C-938E-3CC160347D26' -- Automatic
-    local address = 'Automatic'
+  hs.location.start()
+  local mac = hs.wifi.interfaceDetails().bssid
+  hs.location.stop()
+  local uuid = 'A2DF6E86-2F00-481C-938E-3CC160347D26' -- Automatic
+  local homeMacAddresses = Set {'8c:be:be:2c:fb:77', '8c:be:be:2c:fb:78'}
+  local ylgMacAddresses = Set {'a2:91:ce:b5:18:54'}
 
-    if (mac ~= nil) then
-        -- JonieuNet
-        if (mac == 'd4:da:21:5a:ee:41') then 
-          address = 'Company'
-          uuid = 'E736F2F1-0DB3-47C6-A179-2779923A0021'
-        end
-    else
-      if (ssid ~= nil) then
-        -- JonieuNet
-        if (ssid == 'Xiaomi') then
-          address = 'Company'
-          uuid = 'E736F2F1-0DB3-47C6-A179-2779923A0021'
-        end
-      end
+  if (mac ~= nil) then
+    if (mac == 'd4:da:21:5a:ee:41') then -- JonieuNet
+      uuid = 'E736F2F1-0DB3-47C6-A179-2779923A0021'
+    elseif homeMacAddresses[mac] then -- Home
+      uuid = '5AE03170-29FD-4ECE-B891-C72DCDB00712'
+    elseif ylgMacAddresses[mac] then -- YaoLG
+      uuid = '90C23198-478B-4032-BBA0-A7024FB19797'
     end
-
-    hs.notify.new({title='位置', informativeText = '已切换至「' .. address .. '」'}):send()
-    os.execute('scselect ' .. uuid .. ' > /dev/null') -- 切换位置
-    print('WiFi位置:' .. address)
+  else
+    hs.notify.show('位置切换失败', '获取不到BSSID', '')
+  end
+  print('Router.macAddr', mac)
+  -- os.execute('scselect ' .. uuid .. ' > /dev/null') -- 切换位置
+  Profile.setLocation(uuid) -- 切换位置
 end
 wifiWatcher = hs.wifi.watcher.new(SSIDChanged)
 wifiWatcher:start()
 
+-- 不同的网络位置使用不同的浏览器(需要先将默认浏览器设为Hammerspoon.app)
+hs.urlevent.httpCallback = function(scheme, host, params, fullURL)
+  local p = Profile.getCurrentProfile()
+  hs.urlevent.openURLWithBundle(fullURL, p.browser)
+  print('OpenURL:' .. fullURL .. ', browser:' .. p.browser .. ', location:' .. p.name)
+end
