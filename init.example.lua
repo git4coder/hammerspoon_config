@@ -1,12 +1,3 @@
--- 全局 hs.alert 样式
-hs.alert.defaultStyle.textColor = hs.drawing.color.asRGB({hex = '#FFFFFF', alpha = 1.00}) -- 文本色
-hs.alert.defaultStyle.fillColor = hs.drawing.color.asRGB({hex = '#000000', alpha = 0.75}) -- 背景色
-hs.alert.defaultStyle.strokeColor = hs.drawing.color.asRGB({hex = '#FFFFFF', alpha = 0.30}) -- 边框色
-hs.alert.defaultStyle.radius = 5
-hs.alert.defaultStyle.textFont = 'Monaco' -- AppKeyable使用等宽字体进行排版
-hs.alert.defaultStyle.textSize = 16
-hs.alert.defaultStyle.atScreenEdge = 0
-
 -- 给APP绑定独立的激活键
 hs.loadSpoon('AppKeyable')
 spoon.AppKeyable.config.applications = {

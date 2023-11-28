@@ -24,6 +24,8 @@ Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，�
 
 ```
 git clone https://github.com/git4coder/hammerspoon_config.git ~/.hammersoppn
+mv init.lua init.lua.bak
+mv init.example.lua init.lua
 ```
 
 **方法二**
