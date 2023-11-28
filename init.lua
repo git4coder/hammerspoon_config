@@ -137,8 +137,19 @@ wifiWatcher = hs.wifi.watcher.new(SSIDChanged)
 wifiWatcher:start()
 
 -- 不同的网络位置使用不同的浏览器(需要先将默认浏览器设为Hammerspoon.app)
-hs.urlevent.httpCallback = function(scheme, host, params, fullURL)
+hs.urlevent.httpCallback = function(scheme, host, params, fullURL, senderPID)
   local p = Profile.getCurrentProfile()
+  local bundleID = nil
   hs.urlevent.openURLWithBundle(fullURL, p.browser)
-  print('OpenURL:' .. fullURL .. ', browser:' .. p.browser .. ', location:' .. p.name)
+  if (senderPID ~= -1) then
+    local app = hs.application.applicationForPID(senderPID)
+    if (app ~= nil) then
+      bundleID = app:bundleID();
+    end
+  end
+  print(' OpenURL: ' .. fullURL)
+  print(' Browser: ' .. p.browser)
+  print('Location: ' .. p.name)
+  print('     App: ' .. bundleID)
 end
+
