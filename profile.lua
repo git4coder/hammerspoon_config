@@ -30,8 +30,13 @@ module.locations = {
   },
 }
 
+function module.getCurrentUUID()
+  local uuid = (hs.network.configuration.open():location():gsub('/Sets/', ''))
+  return uuid
+end
+
 function module.getCurrentProfile()
-  local uuid = (hs.network.configuration.open():location():gsub('/Sets/', '')) -- scselect UUID
+  local uuid = (hs.network.configuration.open():location():gsub('/Sets/', ''))
   return module.locations[uuid] or module.locations['A2DF6E86-2F00-481C-938E-3CC160347D26']
 end
 

@@ -117,7 +117,7 @@ function SSIDChanged()
   local uuid = 'A2DF6E86-2F00-481C-938E-3CC160347D26' -- Automatic
   local homeMacAddresses = Set {'8c:be:be:2c:fb:77', '8c:be:be:2c:fb:78'}
   local ylgMacAddresses = Set {'a2:91:ce:b5:18:54'}
-
+  local currentUUID = Profile.getCurrentUUID()
   if (mac ~= nil) then
     if (mac == 'd4:da:21:5a:ee:41') then -- JonieuNet
       uuid = 'E736F2F1-0DB3-47C6-A179-2779923A0021'
@@ -126,12 +126,10 @@ function SSIDChanged()
     elseif ylgMacAddresses[mac] then -- YaoLG
       uuid = '90C23198-478B-4032-BBA0-A7024FB19797'
     end
-  else
-    hs.notify.show('位置切换失败', '获取不到BSSID', '')
   end
-  print('Router.macAddr', mac)
-  -- os.execute('scselect ' .. uuid .. ' > /dev/null') -- 切换位置
-  Profile.setLocation(uuid) -- 切换位置
+  if (currentUUID ~= uuid) then
+    Profile.setLocation(uuid)
+  end
 end
 wifiWatcher = hs.wifi.watcher.new(SSIDChanged)
 wifiWatcher:start()
@@ -150,6 +148,6 @@ hs.urlevent.httpCallback = function(scheme, host, params, fullURL, senderPID)
   print(' OpenURL: ' .. fullURL)
   print(' Browser: ' .. p.browser)
   print('Location: ' .. p.name)
-  print('     App: ' .. bundleID)
+  print('     App: ' .. (bundleID or ''))
 end
 
