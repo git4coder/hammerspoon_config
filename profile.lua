@@ -10,7 +10,8 @@ module = {}
 module.locations = {
   ['A2DF6E86-2F00-481C-938E-3CC160347D26'] = {
     name= 'Automatic',
-    browser = 'com.apple.Safari',
+    -- browser = 'com.apple.Safari',
+    browser = 'com.google.Chrome',
   },
   ['5AE03170-29FD-4ECE-B891-C72DCDB00712'] = {
     name= 'Home',

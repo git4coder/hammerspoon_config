@@ -34,7 +34,8 @@ spoon.AppKeyable.config.applications = {
   {key = 'E', color = '#FFFFFF', path = '/System/Applications/TextEdit.app'}, -- Editor
   {key = 'e', color = '#03a9f4', path = '/Applications/Typora.app'},
   {key = 'f', color = '#FFFFFF', path = '/System/Library/CoreServices/Finder.app'},
-  {key = 'F', color = '#FFFFFF', path = '/System/Applications/FaceTime.app'},
+  {key = 'F', color = '#FFFFFF', path = '/Applications/FileZilla.app'},
+  -- {key = 'F', color = '#FFFFFF', path = '/System/Applications/FaceTime.app'},
   {key = 'g', color = '#FFFFFF', path = '/Applications/Fork.app'}, -- Git fork
   {key = 'G', color = '#FFFFFF', path = '/Applications/WeWork.app'},
   {key = 'H', color = '#FFFFFF', path = '/Applications/VirtualBox.app/Contents/Resources/VirtualBoxVM.app'},
@@ -55,7 +56,7 @@ spoon.AppKeyable.config.applications = {
   {key = 't', color = '#FFFFFF', path = '/System/Applications/Utilities/Terminal.app'},
   {key = 'u', color = '#FFFFFF', path = '/Applications/Firefox.app'},
   {key = 'v', color = '#03a9f4', path = '/Applications/Visual Studio Code.app'},
-  {key = 'V', color = '#FFFFFF', path = '/Applications/wechatwebdevtools.app'},
+  -- {key = 'V', color = '#FFFFFF', path = '/Applications/wechatwebdevtools.app'},
   {key = 'w', color = '#FFFFFF', path = '/Applications/WeChat.app'},
   {key = 'W', color = '#FFFFFF', path = '/Applications/WeWork.app'},
   {key = 'x', color = '#FFFFFF', path = '/Applications/Xmind.app'},
