@@ -136,7 +136,19 @@ local launchOrFocusWindowByPath = function(path)
         break
       end
     end
-    message = fillColor(key .. ': ', '#666666') .. fillColor(message, '#FFFFFF')
+    local appBundleID = hs.application.infoForBundlePath(path)['CFBundleIdentifier']
+    local app = hs.application.get(appBundleID)
+    local total = {}
+    if nil ~= app then
+      total =
+        hs.fnutils.filter(
+          app:allWindows(),
+        function(item)
+          return item:role() == 'AXWindow'
+        end
+      )
+    end
+    message = fillColor(key .. ': ', '#666666') .. fillColor(message, '#FFFFFF') .. fillColor(' ' .. #total, '#666666')
     hs.alert.show(message, alertStyle, hs.screen.mainScreen(), 0.5)
 
     -- 不存在时什么也不做
@@ -276,6 +288,7 @@ local bindHotkey = function(app)
 end
 
 function obj:init()
+  hs.application.enableSpotlightForNameSearches(true)
   for i, v in pairs(_config) do -- ipairs 在遇到第一个 nil 就终止了，nil 会自动跳过
     -- print('merge config:', i, v)
     self.config[i] = v
