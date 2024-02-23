@@ -35,7 +35,6 @@ spoon.AppKeyable.config.applications = {
   {key = 'e', color = '#03a9f4', path = '/Applications/Typora.app'},
   {key = 'f', color = '#FFFFFF', path = '/System/Library/CoreServices/Finder.app'},
   {key = 'F', color = '#FFFFFF', path = '/Applications/FileZilla.app'},
-  -- {key = 'F', color = '#FFFFFF', path = '/System/Applications/FaceTime.app'},
   {key = 'g', color = '#FFFFFF', path = '/Applications/Fork.app'}, -- Git fork
   {key = 'G', color = '#FFFFFF', path = '/Applications/WeWork.app'},
   {key = 'H', color = '#FFFFFF', path = '/Applications/VirtualBox.app/Contents/Resources/VirtualBoxVM.app'},
@@ -150,5 +149,33 @@ hs.urlevent.httpCallback = function(scheme, host, params, fullURL, senderPID)
   print(' Browser: ' .. p.browser)
   print('Location: ' .. p.name)
   print('     App: ' .. (bundleID or ''))
+end
+
+-- 定时锁屏
+lockScreenTimes = { "11:50:00", "17:35:00" }
+LST = nil -- 在 hammerspoon 的控制台中输入 LST:stop() 可终止 timer
+for _, time in pairs(lockScreenTimes)
+do
+  hs.timer.doAt(time, "1d", function()
+    timer = hs.timer.delayed.new(300, function()
+      notify:withdraw()
+      hs.alert("Locking screen …")
+      hs.caffeinate.lockScreen()
+    end):start()
+    LST = timer
+    notify = hs.notify.new(
+      function(notify)
+        timer:stop()
+        hs.alert("Screen lock terminated.")
+      end,
+      {
+        title = "即将锁屏",
+        informativeText = "已计划于5分钟后锁定屏幕",
+        actionButtonTitle = "终止计划",
+        hasActionButton = true,
+      }
+    )
+    notify:send()
+  end)
 end
 
