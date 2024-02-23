@@ -2,14 +2,14 @@
 
 ## 预览
 
-![打开 App 的快捷键清单](screenshot/app-hotkey-help.jpg)
+![打开 App 的快捷键清单](screenshot/preview.png)
 
 ## 用法
 
 1. `caps + 字符` - 打开或切换到指定的 App （`caps` 代指 `CapsLock` 这个大小写切换键）
 1. `caps + ?` - 显示已绑定快捷键的 App
 
-Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，比如连续按 `caps+g` 可以在 `Google Chrome` 的各窗口间切换。
+Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，比如连续按 `caps+c` 可以在 `Google Chrome` 的各窗口间切换。
 
 ## 依赖
 
@@ -23,6 +23,7 @@ Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，�
 推荐第一次使用的用户
 
 ```
+mv ~/.hammerspoon ~/.hammerspoon_bak
 git clone https://github.com/git4coder/hammerspoon_config.git ~/.hammersoppn
 mv init.lua init.lua.bak
 mv init.example.lua init.lua
