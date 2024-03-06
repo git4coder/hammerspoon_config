@@ -100,56 +100,56 @@ hs.hotkey.bind(
   end
 )
 
--- https://stackoverflow.com/questions/656199/search-for-an-item-in-a-lua-list
-function Set(list)
-  local set = {}
-  for _, l in ipairs(list) do
-    set[l] = true
-  end
-  return set
-end
-
--- 不同位置的 WiFi 使用不同的网络配置
-function SSIDChanged()
-  hs.location.start()
-  local mac = hs.wifi.interfaceDetails().bssid
-  hs.location.stop()
-  local uuid = 'A2DF6E86-2F00-481C-938E-3CC160347D26' -- Automatic
-  local homeMacAddresses = Set {'8c:be:be:2c:fb:77', '8c:be:be:2c:fb:78'}
-  local ylgMacAddresses = Set {'a2:91:ce:b5:18:54'}
-  local currentUUID = Profile.getCurrentUUID()
-  if (mac ~= nil) then
-    if (mac == 'd4:da:21:5a:ee:41') then -- JonieuNet
-      uuid = 'E736F2F1-0DB3-47C6-A179-2779923A0021'
-    elseif homeMacAddresses[mac] then -- Home
-      uuid = '5AE03170-29FD-4ECE-B891-C72DCDB00712'
-    elseif ylgMacAddresses[mac] then -- YaoLG
-      uuid = '90C23198-478B-4032-BBA0-A7024FB19797'
-    end
-  end
-  if (currentUUID ~= uuid) then
-    Profile.setLocation(uuid)
-  end
-end
-wifiWatcher = hs.wifi.watcher.new(SSIDChanged)
-wifiWatcher:start()
-
--- 不同的网络位置使用不同的浏览器(需要先将默认浏览器设为Hammerspoon.app)
-hs.urlevent.httpCallback = function(scheme, host, params, fullURL, senderPID)
-  local p = Profile.getCurrentProfile()
-  local bundleID = nil
-  hs.urlevent.openURLWithBundle(fullURL, p.browser)
-  if (senderPID ~= -1) then
-    local app = hs.application.applicationForPID(senderPID)
-    if (app ~= nil) then
-      bundleID = app:bundleID();
-    end
-  end
-  print(' OpenURL: ' .. fullURL)
-  print(' Browser: ' .. p.browser)
-  print('Location: ' .. p.name)
-  print('     App: ' .. (bundleID or ''))
-end
+-- -- https://stackoverflow.com/questions/656199/search-for-an-item-in-a-lua-list
+-- function Set(list)
+--   local set = {}
+--   for _, l in ipairs(list) do
+--     set[l] = true
+--   end
+--   return set
+-- end
+-- 
+-- -- 不同位置的 WiFi 使用不同的网络配置
+-- function SSIDChanged()
+--   hs.location.start()
+--   local mac = hs.wifi.interfaceDetails().bssid
+--   hs.location.stop()
+--   local uuid = 'A2DF6E86-2F00-481C-938E-3CC160347D26' -- Automatic
+--   local homeMacAddresses = Set {'8c:be:be:2c:fb:77', '8c:be:be:2c:fb:78'}
+--   local ylgMacAddresses = Set {'a2:91:ce:b5:18:54'}
+--   local currentUUID = Profile.getCurrentUUID()
+--   if (mac ~= nil) then
+--     if (mac == 'd4:da:21:5a:ee:41') then -- JonieuNet
+--       uuid = 'E736F2F1-0DB3-47C6-A179-2779923A0021'
+--     elseif homeMacAddresses[mac] then -- Home
+--       uuid = '5AE03170-29FD-4ECE-B891-C72DCDB00712'
+--     elseif ylgMacAddresses[mac] then -- YaoLG
+--       uuid = '90C23198-478B-4032-BBA0-A7024FB19797'
+--     end
+--   end
+--   if (currentUUID ~= uuid) then
+--     Profile.setLocation(uuid)
+--   end
+-- end
+-- wifiWatcher = hs.wifi.watcher.new(SSIDChanged)
+-- wifiWatcher:start()
+-- 
+-- -- 不同的网络位置使用不同的浏览器(需要先将默认浏览器设为Hammerspoon.app)
+-- hs.urlevent.httpCallback = function(scheme, host, params, fullURL, senderPID)
+--   local p = Profile.getCurrentProfile()
+--   local bundleID = nil
+--   hs.urlevent.openURLWithBundle(fullURL, p.browser)
+--   if (senderPID ~= -1) then
+--     local app = hs.application.applicationForPID(senderPID)
+--     if (app ~= nil) then
+--       bundleID = app:bundleID();
+--     end
+--   end
+--   print(' OpenURL: ' .. fullURL)
+--   print(' Browser: ' .. p.browser)
+--   print('Location: ' .. p.name)
+--   print('     App: ' .. (bundleID or ''))
+-- end
 
 -- 定时锁屏
 lockScreenTimes = { "11:45:00", "17:30:00" }
