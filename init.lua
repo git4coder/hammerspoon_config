@@ -152,7 +152,7 @@ hs.urlevent.httpCallback = function(scheme, host, params, fullURL, senderPID)
 end
 
 -- 定时锁屏
-lockScreenTimes = { "11:50:00", "17:35:00" }
+lockScreenTimes = { "11:45:00", "17:30:00" }
 LST = nil -- 在 hammerspoon 的控制台中输入 LST:stop() 可终止 timer
 for _, time in pairs(lockScreenTimes)
 do
