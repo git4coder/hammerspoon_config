@@ -136,17 +136,28 @@ local launchOrFocusWindowByPath = function(path)
         break
       end
     end
-    local appBundleID = hs.application.infoForBundlePath(path)['CFBundleIdentifier']
-    local app = hs.application.get(appBundleID)
     local total = {}
-    if nil ~= app then
-      total =
-        hs.fnutils.filter(
-          app:allWindows(),
-        function(item)
-          return item:role() == 'AXWindow'
-        end
-      )
+    local bundle = hs.application.infoForBundlePath(path)
+    if nil ~= bundle then
+      local appBundleID = bundle['CFBundleIdentifier']
+      local app = hs.application.get(appBundleID)
+      if nil ~= app then
+        total =
+          hs.fnutils.filter(
+            app:allWindows(),
+          function(item)
+            return item:role() == 'AXWindow'
+          end
+        )
+      else
+        print('AppNotFound:', appBundleID)
+        return false
+      end
+    else
+      print('PathNotFound:', path)
+      message = fillColor('NotFound: ', '#FF0000') .. fillColor(path, '#666666')
+      hs.alert.show(message, alertStyle, hs.screen.mainScreen(), 0.5)
+      return false
     end
     message = fillColor(key .. ': ', '#666666') .. fillColor(message, '#FFFFFF') .. fillColor(' ' .. #total, '#666666')
     hs.alert.show(message, alertStyle, hs.screen.mainScreen(), 0.5)
