@@ -152,11 +152,12 @@ hs.hotkey.bind(
 -- end
 
 -- 定时锁屏
-lockScreenTimes = { "11:45:00", "17:30:00" }
+lockScreenTimes = { "11:45", "17:30", "18:45" }
 LST = nil -- 在 hammerspoon 的控制台中输入 LST:stop() 可终止 timer
 for _, time in pairs(lockScreenTimes)
 do
   hs.timer.doAt(time, "1d", function()
+    print('hs.timer.doAt: LockScreen: ' .. time)
     timer = hs.timer.delayed.new(300, function()
       notify:withdraw()
       hs.alert("Locking screen …")
@@ -167,6 +168,7 @@ do
       function(notify)
         timer:stop()
         hs.alert("Screen lock terminated.")
+        print('LockScreenTime: Cancelled ' .. time)
       end,
       {
         title = "即将锁屏",
@@ -176,6 +178,7 @@ do
       }
     )
     notify:send()
-  end)
+  end, true)
+  print('LockScreenTime: ' .. time)
 end
 
