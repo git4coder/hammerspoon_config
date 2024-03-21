@@ -149,9 +149,6 @@ local launchOrFocusWindowByPath = function(path)
             return item:role() == 'AXWindow'
           end
         )
-      else
-        print('AppNotFound:', appBundleID)
-        return false
       end
     else
       print('PathNotFound:', path)
