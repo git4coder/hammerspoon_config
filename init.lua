@@ -25,6 +25,7 @@ hs.loadSpoon('ReloadConfiguration') -- 自动重载 Hammerspoon 配置
 
 spoon.AppKeyable.config.applications = {
   {key = 'A', color = '#FFFFFF', path = '/System/Applications/App Store.app'},
+  {key = 'a', color = '#FFFFFF', path = '/Applications/Arduino IDE.app'},
   {key = 'b', color = '#FFFFFF', path = '/Applications/Blender.app'},
   {key = 'B', color = '#FFFFFF', path = '/System/Applications/Books.app'},
   {key = 'c', color = '#FFFFFF', path = '/Applications/Google Chrome.app'},
@@ -32,12 +33,13 @@ spoon.AppKeyable.config.applications = {
   {key = 'd', color = '#FFFFFF', path = '/Applications/DBeaver.app'},
   -- {key = 'D', color = '#FFFFFF', path = '/Applications/NeteaseDictionary.app'},
   {key = 'E', color = '#FFFFFF', path = '/System/Applications/TextEdit.app'}, -- Editor
-  {key = 'e', color = '#03a9f4', path = '/Applications/Typora.app'},
+  {key = 'e', color = '#03a9f4', path = '/Applications/MarkText.app'},
   {key = 'f', color = '#FFFFFF', path = '/System/Library/CoreServices/Finder.app'},
   {key = 'F', color = '#FFFFFF', path = '/Applications/FileZilla.app'},
   -- {key = 'F', color = '#FFFFFF', path = '/System/Applications/FaceTime.app'},
   {key = 'g', color = '#FFFFFF', path = '/Applications/Fork.app'}, -- Git fork
   {key = 'G', color = '#FFFFFF', path = '/Applications/WeWork.app'},
+  {key = 'h', color = '#FFFFFF', path = '/Applications/HBuilderX.app'},
   {key = 'H', color = '#FFFFFF', path = '/Applications/VirtualBox.app/Contents/Resources/VirtualBoxVM.app'},
   {key = 'i', color = '#FFFFFF', path = '/Applications/Postman.app'},
   -- {key = 'j', color = '#03a9f4', path = '/Applications/PhpStorm.app'},
@@ -46,16 +48,18 @@ spoon.AppKeyable.config.applications = {
   {key = 'k', color = '#FFFFFF', path = '/Applications/Sketch.app'},
   {key = 'm', color = '#FFFFFF', path = '/System/Applications/Messages.app'},
   {key = 'M', color = '#FFFFFF', path = '/Applications/TencentMeeting.app'},
-  {key = 'o', color = '#FFFFFF', path = '/Applications/wpsoffice.app'},
+  {key = 'o', color = '#FFFFFF', path = '/Applications/Pages.app'},
   {key = 'p', color = '#FFFFFF', path = '/Applications/Affinity Photo.app'},
   {key = 'P', color = '#FFFFFF', path = '/System/Applications/Freeform.app'},
   {key = 'q', color = '#FFFFFF', path = '/Applications/QQ.app'},
+  {key = 'Q', color = '#FFFFFF', path = '/Applications/wechatwebdevtools.app'},
   {key = 'r', color = '#FFFFFF', path = '/Applications/Microsoft Remote Desktop.app'},
   {key = 's', color = '#FFFFFF', path = '/Applications/Safari.app'},
   {key = 'S', color = '#FFFFFF', path = '/System/Applications/System Settings.app'},
   {key = 't', color = '#FFFFFF', path = '/System/Applications/Utilities/Terminal.app'},
   {key = 'u', color = '#FFFFFF', path = '/Applications/Firefox.app'},
   {key = 'v', color = '#03a9f4', path = '/Applications/Visual Studio Code.app'},
+  {key = 'V', color = '#FFFFFF', path = '/Applications/Cursor.app'},
   -- {key = 'V', color = '#FFFFFF', path = '/Applications/wechatwebdevtools.app'},
   {key = 'w', color = '#FFFFFF', path = '/Applications/WeChat.app'},
   {key = 'W', color = '#FFFFFF', path = '/Applications/WeWork.app'},
@@ -63,6 +67,16 @@ spoon.AppKeyable.config.applications = {
   {key = 'X', color = '#FFFFFF', path = '/Applications/Xcode.app'},
   {key = 'y', color = '#FFFFFF', path = '/Applications/NeteaseMusic.app'}
 }
+
+-- table.insert(spoon.AppKeyable.config.functions, 1, {
+--   name = 'Frontmost',
+--   key = '5',
+--   fun = function()
+--     local script = [[
+--     ]]
+--     hs.osascript.applescript(script)
+--   end
+-- })
 
 spoon.ReloadConfiguration:start()
 spoon.AppKeyable:start()
@@ -143,7 +157,7 @@ hs.urlevent.httpCallback = function(scheme, host, params, fullURL, senderPID)
   if (senderPID ~= -1) then
     local app = hs.application.applicationForPID(senderPID)
     if (app ~= nil) then
-      bundleID = app:bundleID();
+      bundleID = app:bundleID()
     end
   end
   print(' OpenURL: ' .. fullURL)
@@ -151,4 +165,3 @@ hs.urlevent.httpCallback = function(scheme, host, params, fullURL, senderPID)
   print('Location: ' .. p.name)
   print('     App: ' .. (bundleID or ''))
 end
-
