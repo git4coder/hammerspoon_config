@@ -2,14 +2,14 @@
 
 ## 预览
 
-![打开 App 的快捷键清单](screenshot/app-hotkey-help.jpg)
+![打开 App 的快捷键清单](screenshot/preview.png)
 
 ## 用法
 
 1. `caps + 字符` - 打开或切换到指定的 App （`caps` 代指 `CapsLock` 这个大小写切换键）
-1. `caps + ?` - 显示已绑定快捷键的 App
+1. `caps + /` - 显示已绑定快捷键的 App
 
-Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，比如连续按 `caps+g` 可以在 `Google Chrome` 的各窗口间切换。
+Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，比如连续按 `caps+c` 可以在 `Google Chrome` 的各窗口间切换。
 
 ## 依赖
 
@@ -23,6 +23,7 @@ Tip: 连按同一个快捷键可以在当前 App 的各窗口间循环切换，�
 推荐第一次使用的用户
 
 ```
+mv ~/.hammerspoon ~/.hammerspoon_bak
 git clone https://github.com/git4coder/hammerspoon_config.git ~/.hammersoppn
 mv init.lua init.lua.bak
 mv init.example.lua init.lua
@@ -36,20 +37,20 @@ Hammerspoon 用户可使用这个方法追加到已有配置中
 
 ## 配置
 
-编辑 `./Spoons/AppKeyable.spoon/config.lua`，在 `applications` 中修改 app 及其快捷键；
+编辑 `./Spoons/AppKeyable.spoon/config.lua`，在 `applications` 中修改 app 及其快捷键（不推荐）；
 
-或在 `~/.hammerspoon/init.lua` 中尾添加以下内容：
+或在 `~/.hammerspoon/init.lua` 中添加以下内容（推荐）：
 
 ```lua
 hs.loadSpoon("AppKeyable")
-spoon.AppKeyable.config.hyper = {'ctrl', 'alt', 'cmd'}
-spoon.AppKeyable.config.applications = {
+spoon.AppKeyable.config.hyper = {'ctrl', 'alt', 'cmd'} -- 不要使用 shift，原因见下文
+spoon.AppKeyable.config.applications = { -- 注意： path 中出现 CJK 字符会导致 `caps + /` 的排版错乱（https://en.wikipedia.org/wiki/CJK_characters）
   {key = 'a', path = '/Applications/Affinity Photo.app'},
   {key = 'b', path = '/Applications/Bear.app'},
   {key = 'B', path = '/Applications/Blender.app'},
   -- more applications ...
 }
-spoon.AppKeyable.config.functions = {} -- 空 table 关掉自带的 functions
+spoon.AppKeyable.config.functions = {} -- 空 table 关掉自带的 functions，详见 `./Spoons/AppKeyable.spoon/config.lua`
 spoon.AppKeyable:start()
 ```
 
@@ -68,9 +69,9 @@ spoon.AppKeyable:start()
 
 以下功能需要在 `init.lua` 中启用：
 
-1. `Spoons/AppKeyable.spoon` 为常用 App 绑定快捷键
-1. `Spoons/ReloadConfiguration.spoon` 自动加载新配置
-1. `Spoons/SpeedMenu.spoon` 状态栏显示网速
+1. `Spoons/AppKeyable.spoon` 为常用 App 绑定快捷键，核心功能，必须使用
+1. `Spoons/ReloadConfiguration.spoon` 自动加载新配置，额外功能，非必须
+1. `Spoons/SpeedMenu.spoon` 状态栏显示网速，额外功能，非必须
 
 ## Karabiner-Elements 里设置 hyper 键的 json
 
@@ -175,3 +176,5 @@ for i,v in ipairs(hs.application.runningApplications()) do
   end
 end
 ```
+
+Windows 用户可[使用 AutoHotKey v1 来实现类似功能](https://blog.upall.cn/3479.html)。
