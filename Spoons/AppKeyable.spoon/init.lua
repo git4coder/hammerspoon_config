@@ -121,6 +121,7 @@ local getAppName = function(path)
 end
 
 --  打开/切换到App(可以在当前 APP 的窗口间切换)
+local launchingApps = {}
 local launchOrFocusWindowByPath = function(path)
   return function()
     -- 切换时添加提醒信息（hs.hotkey.bind 的 message 去不掉按键提示）
@@ -158,6 +159,13 @@ local launchOrFocusWindowByPath = function(path)
     end
     message = fillColor(key .. ': ', '#666666') .. fillColor(message, '#FFFFFF') .. fillColor(' ' .. #total, '#666666')
     hs.alert.show(message, alertStyle, hs.screen.mainScreen(), 0.5)
+
+    if launchingApps[path] then
+      print('启动中:', path)
+      message = fillColor('Launching: ', '#00eeff') .. fillColor(path, '#666666')
+      hs.alert.show(message, alertStyle, hs.screen.mainScreen(), 0.5)
+      return false
+    end
 
     -- 不存在时什么也不做
     if false == fileExists(path) then
@@ -216,9 +224,27 @@ local launchOrFocusWindowByPath = function(path)
       end
       wins = nil
     else -- 当前 APP 不是要打开的 APP 时直接切到 APP 不用切换 APP 的窗口
-      hs.application.launchOrFocus(path)
-      -- Finder 比较特殊，可能 focus 不了，需要再来一下，原因不详
       local appBundleID = hs.application.infoForBundlePath(path)['CFBundleIdentifier']
+
+      -- 加入 launchingApps 并在启动后移出 launchingApps
+      launchingApps[path] = true
+      print('开始启动:', path)
+      hs.application.launchOrFocus(path)
+      local appLaunchMaxWaitSeconds = 10
+      local appLaunchStarted = 0
+      local appLaunchPoll
+      appLaunchPoll = hs.timer.doEvery(0.1, function()
+        appLaunchStarted = appLaunchStarted + 0.1
+        local app = hs.application.get(appBundleID) -- Gets a running application
+        if app or appLaunchStarted >= appLaunchMaxWaitSeconds then
+          launchingApps[path] = nil
+          appLaunchPoll:stop()
+          print('启动结束:', app and app:bundleID() .. ' / ' .. appLaunchStarted)
+          return
+        end
+      end)
+
+      -- Finder 比较特殊，可能 focus 不了，需要再来一下，原因不详
       if 'com.apple.finder' == appBundleID then
         local app = hs.application.get(appBundleID) -- 参数不能是 Finder 得是 访达，不过支持传 bundleID
         local wins =
