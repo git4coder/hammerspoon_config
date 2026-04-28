@@ -21,6 +21,7 @@ hs.alert.defaultStyle.atScreenEdge = 0
 
 hs.loadSpoon("Env") -- 加载 ~/.hammerspoon/.env 文件中的环境变量
 hs.loadSpoon('AppKeyable') -- 给APP绑定独立的激活键
+hs.loadSpoon("RemotePasteboard")
 --hs.loadSpoon("SpeedMenu") -- 状态栏的下/下截网速
 hs.loadSpoon('ReloadConfiguration') -- 自动重载 Hammerspoon 配置
 
@@ -84,6 +85,10 @@ spoon.AppKeyable.config.applications = {
 spoon.Env:load() -- 加载 .env 文件，默认为 ~/.hammerspoon/.env
 spoon.ReloadConfiguration:start()
 spoon.AppKeyable:start()
+spoon.RemotePasteboard:start(
+  spoon.Env:get('REMOTE_PASTEBOARD_PASSWORD', 'default_password'),
+  spoon.Env:get('REMOTE_PASTEBOARD_URL', 'https://textdb.dev/api/data/028e9d18-dddb-41e4-b28a-b4a6f39dfe30')
+)
 -- spoon.SpeedMenu:start() -- 不需要 start，loadSpoon() 时已经自动启动了
 
 -- 打开项目所在文件夹
@@ -200,91 +205,3 @@ do
   end, true)
   print('LockScreenTime: ' .. time)
 end
-
-function crypt(message, password, isEncrypt)
-    if nil == message then
-      message = ''
-    end
-    -- 1. 写入临时文件
-    local tmpfile = os.tmpname()
-    local f = io.open(tmpfile, "w")
-    f:write(message)
-    f:close()
-    -- 2. 构造 openssl 命令
-    local mode = isEncrypt == false and "-d" or "-e"
-    local cmd = string.format(
-        [[openssl enc -aes-256-cbc -a -md sha256 -pbkdf2 -iter 1000 -salt -pass pass:%s -in "%s" %s]],
-        password, tmpfile, mode
-    )
-    -- 3. 执行命令
-    local output, status, type, rc = hs.execute(cmd, true)
-    if nil == status then
-      local message = hs.styledtext.new(
-        'Error: crypt failed. [code:' .. rc ..  ']',
-        {
-          color = hs.drawing.color.asRGB(
-            {
-              hex = '#FF0000',
-              alpha = 1
-            }
-          ),
-          font = {
-            name = 'Monaco',
-            size = 14
-          }
-        }
-      )
-      hs.alert.show(message);
-    end
-    -- 4. 删除临时文件
-    os.remove(tmpfile)
-    -- 5. 返回结果
-    print('crypt.message: ' .. message)
-    print('crypt.cmd: ' .. cmd)
-    print('crypt.status: ' .. tostring(status))
-    print('crypt.terminatedReason: ' .. type)
-    print('crypt.exitCode: ' .. rc)
-    print('crypt.output: ' .. output)
-    return status and output or nil
-end
-
--- 远程剪贴板
-local pasteboardPassword = spoon.Env:get('REMOTE_PASTEBOARD_PASSWORD', 'default_password')
-local pasteboardUrl = spoon.Env:get('REMOTE_PASTEBOARD_URL', 'https://textdb.dev/api/data/028e9d18-dddb-41e4-b28a-b4a6f39dfe30')
-hs.hotkey.bind(
-  {'shift'},
-  'f9',
-  function()
-    local loading = hs.alert.show("copying", 'allways')
-    hs.eventtap.keyStroke({ "cmd" }, "c")
-    local text = hs.pasteboard.readString()
-    local encrypted = crypt(text, pasteboardPassword)
-    if encrypted then
-      text = encrypted
-    end
-    local headers = {
-      ['Content-Type'] = 'text/plain',
-      -- ['Content-Type'] = 'x-www-form-urlencoded;charset=utf-8',
-    }
-    local code, body, headers = hs.http.post(pasteboardUrl, text, headers)
-    hs.alert.closeSpecific(loading)
-    hs.alert.show("saved:" .. body)
-  end
-)
-hs.hotkey.bind(
-  {'shift'},
-  'f8',
-  function()
-    local loading = hs.alert.show("pasting", 'allways')
-    local code, body, headers = hs.http.get(pasteboardUrl)
-    local decrypted = crypt(body, pasteboardPassword, false)
-    print('remote-pasteboard.body:\n' .. body)
-    if decrypted then
-      body = decrypted
-    end
-    hs.pasteboard.setContents(body)
-    hs.eventtap.keyStroke({ "cmd" }, "v")
-    hs.alert.closeSpecific(loading)
-  end
-)
-
